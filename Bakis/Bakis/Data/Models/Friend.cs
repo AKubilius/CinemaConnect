@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string? UserId { get; set; } = null;
-  
+     
         public string FriendId { get; set; }
     }
 }
