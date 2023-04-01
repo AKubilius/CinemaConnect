@@ -48,8 +48,10 @@ namespace Bakis.Controllers
 
             if (allList.Count == 0)
                 return BadRequest("User has nothing in list");
-
-            return Ok(items);
+            var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
+            if (List.Count == 0)
+                return BadRequest("User has nothing in list");
+            return Ok(List);
         }
         [HttpPost]
         [Authorize(Roles = Roles.User)]
