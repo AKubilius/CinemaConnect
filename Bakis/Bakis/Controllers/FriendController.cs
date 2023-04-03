@@ -30,19 +30,20 @@ namespace Bakis.Controllers
         {
             var allList = await _databaseContext.Friends.ToListAsync();
             if (allList.Count == 0)
-                return BadRequest("User has nothing in list");
+                return NotFound("User has no friends");
             var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
             if (List.Count == 0)
-                return BadRequest("User has nothing in list");
+                return BadRequest("User has no access");
             return Ok(List);
         }
+
         [HttpPost]
         [Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<Friend>>> CreateFriendship(Friend List)
+        public async Task<ActionResult<List<Friend>>> CreateFriendship(Friend friend)
         {
-            List.UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            friend.UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             
-            _databaseContext.Friends.Add(List);
+            _databaseContext.Friends.Add(friend);
             await _databaseContext.SaveChangesAsync();
             return Ok(await _databaseContext.Friends.ToListAsync());
         }
