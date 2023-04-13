@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios, { AxiosResponse } from "axios";
 import { useParams } from "react-router-dom";
-import { MovieCard } from './MovieCard';
 import { info } from 'console';
 
 import Box from '@mui/material/Box';
@@ -15,9 +14,6 @@ export const MoviePage = () => {
     const[movies,setMovies] = useState<any>([]);
 
     const fetch = async () =>{
-        const {data:{results}} = await axios.get(`${API}${id}?api_key=c9154564bc2ba422e5e0dede6af7f89b`)
-
-
         const info = await axios.get(`${API}${id}`,
         {
             params:{
@@ -26,7 +22,6 @@ export const MoviePage = () => {
         })
         setMovies(info)
         console.log(info)
-
     }
     useEffect(()=>{
         fetch()

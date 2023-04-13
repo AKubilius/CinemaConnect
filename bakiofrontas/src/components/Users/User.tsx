@@ -21,16 +21,14 @@ const User: React.FC<IUser> = ({
   surname,
   id
 }) => {
-  const [friendId, setFriendId] = React.useState<any>('');
+
   const [pressed, setPressed] = useState(true);
-  const [createdId, setCreatedId] = React.useState<any>('');
+ 
   const token = `Bearer ${sessionStorage.getItem("token")}`
 
   const handleClick = (Id:any) => {
-    setPressed(!pressed);
-    setFriendId(Id);
-    
-     pressed ? createRequest(Id) : deleteUser(Id)
+    setPressed(!pressed); 
+    pressed ? createRequest(Id) : deleteUser(Id)
   };
 
   async function createRequest(Id:any) {
@@ -47,7 +45,7 @@ const User: React.FC<IUser> = ({
         },
       );
   
-      setCreatedId(JSON.stringify(data, null, 4));
+      //setCreatedId(JSON.stringify(data, null, 4));
   
       return data;
     } catch (error) {

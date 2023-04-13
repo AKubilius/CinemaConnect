@@ -8,7 +8,6 @@ const apiTrending = axios.create({
 });
 
 
-
 const authConfig = {
   headers: {
     Authorization:  `Bearer ${sessionStorage.getItem("token")}`,

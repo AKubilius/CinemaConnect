@@ -6,6 +6,18 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar/Toolbar';
 import Container from '@mui/material/Container';
 import AppBar from '@mui/material/AppBar/AppBar';
+import Logo from '../../img/logo.svg'
+import Logoo from '../../img/Logoo.png'
+import { NavLink } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar/Avatar';
+import IconButton from '@mui/material/IconButton';
+import Popover from '@mui/material/Popover';
+import { NavBarRequests } from './NavBarRequests';
+import { NavBarNotifications } from './NavBarNotifications';
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import Loading from './Loading';
+
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -23,30 +35,105 @@ function a11yProps(index: number) {
 }
 
 export default function BasicTabs() {
-  const [value, setValue] = React.useState(0);
+
+  const [loading, setLoading] = useState(false);
+
+  const location = useLocation();
+
+  const [value, setValue] = useState(() => {
+    switch (location.pathname) {
+      case '/home':
+        return 0;
+      case '/movies':
+        return 1;
+      case '/chat':
+        return 2;
+      default:
+        return 0;
+    }
+  });
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case '/home':
+        setValue(0);
+        break;
+      case '/movies':
+        setValue(1);
+        break;
+      case '/chat':
+        setValue(1);
+        break;
+      default:
+        setValue(0);
+        break;
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500); // Adjust the delay as needed
+  
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+ 
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setLoading(true);
     setValue(newValue);
   };
+  
 
   return (
+    <>
+    {loading ? <Loading/> : 
     <AppBar position="fixed" sx={{ bgcolor: 'white', top:-10 }}>
       <Container maxWidth="xl" >
-        <Toolbar disableGutters sx={{position:'relative',justifyContent:'center'}} >
+        <Toolbar disableGutters sx={{position:'relative',justifyContent:'space-between',}} >
+          <Box sx={{
+            
+             marginTop:1,
+             display:'flex',
+             flexDirection:'row'
 
-
-   
+          }}>
+          <img style={{marginTop:5}} height={45} src={Logoo}></img>
+          <p style={{color:'black'}}>CineConnect</p>
+          </Box>
+        
+       
      <Box sx={{ borderBottom: 1, borderColor: 'divider', alignSelf:'flex-end' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
-          <Tab disableRipple label="Srautas" href='/home' {...a11yProps(0)} />
-          <Tab disableRipple label="Media" href='/movies' {...a11yProps(1)} />
-          <Tab disableRipple label="Pasiūlymai"  {...a11yProps(2)} />
-        </Tabs>
+     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+  <NavLink to="/home" style={{ textDecoration: 'none' }}>
+    <Tab disableRipple label="Srautas" {...a11yProps(0)} />
+  </NavLink>
+  <NavLink to="/movies" style={{ textDecoration: 'none' }}>
+    <Tab disableRipple label="Medija" {...a11yProps(1)} />
+  </NavLink>
+  <NavLink to="/chat" style={{ textDecoration: 'none' }}>
+    <Tab disableRipple label="Žinutės" {...a11yProps(2)} />
+  </NavLink>
+</Tabs>
+        
+      </Box>
+      <Box sx={{ display:'flex', flexDirection:'row',alignContent:'center',justifyContent:'center', marginTop:1}}>
+
+
+      <NavBarRequests/>
+      <NavBarNotifications/>
+      
+      <Avatar sx={{
+        backgroundColor:'green'
+      }}></Avatar>
       </Box>
       
-   
     </Toolbar>
+    
     </Container>
     </AppBar>
+    }
+    </>
   );
 }

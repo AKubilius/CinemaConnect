@@ -52,7 +52,7 @@ const Movie = () => {
                     </div>
                     <div className="movie__detailRightBottom">
                         <div className="synopsisText">Apibūdinimas</div>
-                        <div style={{textShadow: "2px 2px 5px black"}}>{currentMovieDetail ? currentMovieDetail.overview : ""}</div>
+                        <div >{currentMovieDetail ? currentMovieDetail.overview : ""}</div>
                     </div>
                     
                 </div>

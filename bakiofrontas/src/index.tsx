@@ -13,28 +13,31 @@ import { RightSideBar } from './components/RightSideBar/RightSideBar';
 import Users from './components/Users/Users';
 import Container from './components/Container/Container';
 import BasicTabs from './components/Tabs/Tabs';
+import TempContainer from './components/Container/TempContainer';
+import Chat from './components/Chat/Chat';
+import ChatContainer from './components/Container/ChatContainer';
 
-
+ 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
 
   <BrowserRouter>
-
-
   <BasicTabs/>
-   
   <Routes>
-  <Route path="/container" element={<Container />} />
+  
     <Route path="/users" element={<Users />} />
         <Route path="/home" element={<Container />} />
+        <Route path="/movies/:id" element={<TempContainer />} />
+        <Route path="/movies" element={<TempContainer />} />
         <Route path="/" element={<Navigate replace to="/home" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/movie/:id" element={<Movie/>} />
-
         <Route path="/list" element={<MyListTable/>} />
+        <Route path="/chat/:id?" element={<ChatContainer/>} />
+       
       </Routes>
   </BrowserRouter>
 );

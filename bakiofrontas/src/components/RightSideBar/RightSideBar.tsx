@@ -40,11 +40,9 @@ export const RightSideBar = () => {
     <div className='rightSideBar'>
       <Box sx={{ bgcolor: '#cfe8fc', borderRadius: 10, width: '100%' }}>
         
-<p>Populiarūs</p>
-        <Grid container  columnSpacing={{ xs: 5, sm: 5, md: 5 }}>
+<p>Šios dienos aktualiausi</p>
+        <Grid container  columnSpacing={{ xs: 5, sm: 5, md: 1 }}>
 
-          
-           
           {movies?.slice(0,6).map((movie: any, index: React.Key | null | undefined) => (
             <Grid item xs={6}>
                 <RightMovie

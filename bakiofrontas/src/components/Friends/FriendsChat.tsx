@@ -2,14 +2,15 @@ import React from 'react'
 import {useEffect, useState} from 'react'
 import axios,{ AxiosRequestConfig } from 'axios'
 import Grid from '@mui/material/Grid/Grid';
-import User from './User';
+import Friend from './FriendChat';
+import Box from '@mui/material/Box/Box';
 
-const Users = () => {
-    const[users,setusers] = useState<any>([]);
+const FriendsChat = () => {
+    const[friends,setFriends] = useState<any>([]);
     const token = `Bearer ${sessionStorage.getItem("token")}`
     const fetch = async () =>{
         
-        const {data} = await axios.get(`https://localhost:7019/user`,
+        const {data} = await axios.get(`https://localhost:7019/user/friends`,
         {
             headers: {
                 'Content-Type': 'application/json',
@@ -17,7 +18,7 @@ const Users = () => {
                 Authorization: token
               },
         })
-        setusers(data)
+        setFriends(data)
         console.log(data)
 
     }
@@ -25,20 +26,19 @@ const Users = () => {
         fetch()
     }, [])
 
-
   return (
     <div>
-
-{users?.slice(0,3).map((user: any, index: React.Key | null | undefined) => (
-                <User
+{friends?.map((user: any, index: React.Key | null | undefined) => (
+                <Friend
                     username={user.userName}
                     name={user.name}
                     surname={user.surname}
                     id ={user.id}
                 />
             ))}
-    </div>
+            </div>
+    
   )
 }
 
-export default Users
+export default FriendsChat
