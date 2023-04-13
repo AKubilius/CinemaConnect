@@ -268,7 +268,7 @@ const Post: React.FC<IPost> = ({
     try {
       // 👇️ const data: UpdateUserResponse
       const { data, status } = await axios.delete<any>(
-        `https://localhost:7019/List/${Id}`,
+        `https://localhost:7019/List/${Id.movieId}`,
         {
           headers: {
             Accept: 'application/json',

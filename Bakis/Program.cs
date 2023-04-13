@@ -49,7 +49,7 @@ builder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationH
 
 builder.Services.AddSignalR();
 
-
+builder.Services.AddHttpClient();
 
 
 var app = builder.Build();

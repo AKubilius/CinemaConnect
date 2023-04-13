@@ -30,9 +30,6 @@ export default function BasicTable() {
     const[movies,setMovies] = useState<any[]>([])
     const[List,setList] = useState<any[]>([])
     
-
-    
-
     const fetchIds = async  () => {
         try {
           const {data} = await axios.get(`https://localhost:7019/List`, {

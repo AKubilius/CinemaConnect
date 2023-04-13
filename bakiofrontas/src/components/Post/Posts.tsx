@@ -26,7 +26,8 @@ const Posts : React.FC = () => {
     const [totalPosts, setTotalPosts] = useState<number>(0);
 
     const fetchPosts = useCallback(() => {
-      if (requestInProgress.current) {
+      // Stop fetching if request in progress or all posts fetched
+      if (requestInProgress.current || posts.length >= totalPosts) {
         return;
       }
     
@@ -36,11 +37,11 @@ const Posts : React.FC = () => {
       axios
         .get(`https://localhost:7019/Post`, {
           params: {
-            pageSize:2,
-            page: pages
-          }
+            pageSize: 2,
+            page: pages,
+          },
         })
-        .then((response: { data: any[]; }) => {
+        .then((response: { data: any[] }) => {
           const newPosts = response.data.filter((post: any) => !posts.some((p: any) => p.id === post.id));
           setPosts((prevPosts: any) => [...prevPosts, ...newPosts]);
           setPage((prevPage) => prevPage + 1);
@@ -51,7 +52,7 @@ const Posts : React.FC = () => {
           console.log(error);
           requestInProgress.current = false;
         });
-    }, [pages, posts]);
+    }, [pages, posts, totalPosts]);
       
       const handleOnScroll = useCallback(() => {
         const windowHeight = window.innerHeight;
