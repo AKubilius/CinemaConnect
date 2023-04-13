@@ -36,7 +36,7 @@ namespace Bakis.Controllers
         }
         [HttpPost]
         [Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<MyList>>> Create(MyList List)
+        public async Task<ActionResult<List<MyList>>> Create(MyList List) //STRINGAS ID MOVIE???? perdaryk
         {
             List.UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 

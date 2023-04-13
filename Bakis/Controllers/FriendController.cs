@@ -28,9 +28,14 @@ namespace Bakis.Controllers
         [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<Friend>>> GetUserFriends()
         {
+
             var allList = await _databaseContext.Friends.ToListAsync();
             if (allList.Count == 0)
                 return NotFound("User has no friends");
+
+            //_databaseContext.Friends.RemoveRange(allList);
+            //await _databaseContext.SaveChangesAsync();
+
             var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
             if (List.Count == 0)
                 return BadRequest("User has no access");

@@ -23,31 +23,62 @@ namespace Bakis.Controllers
 
             _authorizationService = authorizationService;
         }
-
+        
 
         [HttpGet]
         [Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<FriendRequest>>> GetUserRequests()
+        public async Task<ActionResult<List<FriendRequest>>> GetUserRequests() //Tikrinam kas jį pakvietę,ir visus userius, kurie pakvietę grąžinam.
         {
             var allList = await _databaseContext.FriendRequests.ToListAsync();
             if (allList.Count == 0)
                 return NotFound("There are no friend requests");
 
-            _databaseContext.FriendRequests.RemoveRange(allList);
-            await _databaseContext.SaveChangesAsync();
-            //var List = allList.Where(s => s.FriendId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
-            //if (List.Count == 0)
-            //    return NotFound("User has no friend requests");
-            return Ok(allList);
+            var Requests = allList.Where(s => s.FriendId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
+            //_databaseContext.FriendRequests.RemoveRange(allList);
+            //await _databaseContext.SaveChangesAsync();
+            if (Requests.Count == 0)
+                return NotFound("User has no friend requests");
+            return Ok(Requests);
+        }
+
+
+        [HttpGet("/users")]
+        [Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<FriendRequest>>> GetUsersRequests() 
+        {      
+            var allList = await _databaseContext.FriendRequests.ToListAsync();
+            if (allList.Count == 0)
+                return NotFound("There are no friend requests");
+
+            var Requests = allList.Where(s => s.FriendId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
+            if (Requests.Count == 0)
+                return NotFound("User has no friend requests");
+
+            var Users = await _databaseContext.Users.ToListAsync();
+
+            List<User> users = new List<User>();
+            foreach (var request in Requests)
+            {
+                foreach (var user in Users)
+                {
+                    if (request.InvitedBy == user.Id)
+                    {
+                        users.Add(user);
+                    }
+                }
+            }
+            return Ok(users);
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<FriendRequest>>> InviteFriend(FriendRequest friend)
         {
-            friend.InvitedBy = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            friend.Status = "Pending"; // čia ištrynt nes nereikia
-
+            var Users = await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
+            friend.InvitedBy = Users.Id;
+            friend.Name = Users.UserName;
+            
+          // friend.Name = 
             var List =  _databaseContext.FriendRequests.SingleOrDefault(e => e.FriendId == friend.FriendId && e.InvitedBy == friend.InvitedBy);
             if (List !=null)
             {
@@ -56,9 +87,9 @@ namespace Bakis.Controllers
             _databaseContext.FriendRequests.Add(friend);
             
             await _databaseContext.SaveChangesAsync();
-            var Created =_databaseContext.FriendRequests.SingleOrDefault(e => e.FriendId == friend.FriendId && e.InvitedBy == friend.InvitedBy);
+            var Created =_databaseContext.FriendRequests.SingleOrDefault(e => e.FriendId == friend.FriendId && e.InvitedBy == friend.InvitedBy);// cia paziurek veliau ar tvarkyt, nes lyg nesjanas nuo piramis
 
-            return Ok(Created.Id);
+            return Ok("Invite was sent");
         }
 
         [HttpDelete("{id}")]
@@ -80,21 +111,67 @@ namespace Bakis.Controllers
 
             _databaseContext.FriendRequests.Remove(List);
             await _databaseContext.SaveChangesAsync();
+            return Ok("Request canceled");
+        }
+
+        [HttpPost("accept/{id}")]
+        // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        public async Task<ActionResult<List<FriendRequest>>> AcceptRequest(int id)
+        {
+            var List = await _databaseContext.FriendRequests.FindAsync(id);
+            if (List == null)
+                return BadRequest("List not found");
+
+            Friend a = new Friend();
+            a.FriendId = List.FriendId;
+            a.UserId = List.InvitedBy;
+            _databaseContext.Friends.Add(a);
+
+            // Create a new room for the two users// Name isnt important right now/ maybe later?
+            Room newRoom = new Room
+            {
+                Name = "Room for " + List.FriendId + " and " + List.InvitedBy
+            };
+            _databaseContext.Rooms.Add(newRoom);
+
+            await _databaseContext.SaveChangesAsync();
+
+            UserRoom userRoom1 = new UserRoom
+            {
+                UserId = List.FriendId,
+                RoomId = newRoom.Id
+            };
+            UserRoom userRoom2 = new UserRoom
+            {
+                UserId = List.InvitedBy,
+                RoomId = newRoom.Id
+            };
+
+
+            //Prie friends turėčiau įdėt, gal prie FriendsRequest ten kažkur
+            //    _context.Rooms.Add(newRoom);
+            //await _context.SaveChangesAsync();
+
+            _databaseContext.UserRooms.Add(userRoom1);
+            _databaseContext.UserRooms.Add(userRoom2);
+
+            _databaseContext.FriendRequests.Remove(List);
+            await _databaseContext.SaveChangesAsync();
             return Ok(List);
         }
-        //[HttpDelete("{id}")]
-        //// [Authorize(Roles = Roles.User + "," + Roles.Admin)]
-        //public async Task<ActionResult<List<FriendRequest>>> AcceptRequest(int id)
-        //{
-        //    var List = await _databaseContext.FriendRequests.FindAsync(id);
-        //    if (List == null)
-        //        return BadRequest("List not found");
 
 
-        //    _databaseContext.FriendRequests.Remove(List);
-        //    await _databaseContext.SaveChangesAsync();
-        //    return Ok(List);
-        //}
+        [HttpDelete("delete/{id}")]
+        // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        public async Task<ActionResult<List<FriendRequest>>> DeleteRequest(int id)
+        {
+            var List = await _databaseContext.FriendRequests.FindAsync(id);
+            if (List == null)
+                return BadRequest("List not found");
+            _databaseContext.FriendRequests.Remove(List);
+            await _databaseContext.SaveChangesAsync();
+            return Ok(List);
+        }
 
     }
 }

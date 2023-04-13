@@ -53,7 +53,7 @@ namespace Bakis.Controllers
             //if (List.Count == 0)
             //    return BadRequest("User has nothing in list");
 
-            return Ok(allList);
+            return Ok(items);
         }
         [HttpPost]
         [Authorize(Roles = Roles.User)]
@@ -73,6 +73,10 @@ namespace Bakis.Controllers
             var List = await _databaseContext.Posts.FindAsync(id);
             if (List == null)
                 return BadRequest("List not found");
+
+            //_databaseContext.FriendRequests.RemoveRange(allList);
+            //await _databaseContext.SaveChangesAsync();
+
 
             var authResult = await _authorizationService.AuthorizeAsync(User, List, PolicyNames.ResourceOwner);
             if (!authResult.Succeeded)

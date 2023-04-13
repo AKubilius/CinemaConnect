@@ -37,7 +37,7 @@ namespace Bakis.Auth
             (
                 issuer: _issuer,
                 audience: _audience,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(24),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(_authSigningKey, SecurityAlgorithms.HmacSha256)
             );

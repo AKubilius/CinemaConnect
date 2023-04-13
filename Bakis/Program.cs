@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSignalR();
+
 builder.Services.AddControllers();
 
 builder.Services.AddIdentity<User, IdentityRole>()
@@ -47,6 +47,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
 
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -82,6 +83,8 @@ app.MapControllerRoute(
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
+
+
 app.MapHub<ChatHub>("/chatHub");
 using var scope = app.Services.CreateScope();
 

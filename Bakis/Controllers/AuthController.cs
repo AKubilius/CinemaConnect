@@ -1,10 +1,12 @@
 ﻿using Bakis.Auth;
 using Bakis.Auth.Model;
 using Bakis.Data.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using System.Security.Claims;
 
 namespace Bakis.Controllers
 {
@@ -28,7 +30,7 @@ namespace Bakis.Controllers
         {
             var user = await _userManager.FindByNameAsync(registerUserDto.UserName);
             if (user != null)
-                return BadRequest("Request invalid.");
+                return BadRequest("UserName is Taken");
 
             var newUser = new User
             {
@@ -56,19 +58,27 @@ namespace Bakis.Controllers
             if (!isPasswordValid)
                 return BadRequest("User name or password is invalid.");
 
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id)
+                };
+
+            var userIdentity = new ClaimsIdentity(claims, "login");
+            var principal = new ClaimsPrincipal(userIdentity);
+
+            await HttpContext.SignInAsync(principal);
             // valid user
             var roles = await _userManager.GetRolesAsync(user);
             bool aa = false;
             foreach (var role in roles)
             {
                 if (role == "Admin")
-                {
                     aa = true;
-                }
+                
             }
             var accessToken = _jwtTokenService.CreateAccessToken(user.UserName, user.Id, roles);
 
-            return Ok(new SuccessfulLoginDto(accessToken, loginDto.UserName, aa));
+            return Ok(new SuccessfulLoginDto(accessToken, loginDto.UserName, aa, "Success"));
         }
     }
 }

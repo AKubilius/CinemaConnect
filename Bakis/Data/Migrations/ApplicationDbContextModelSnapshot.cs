@@ -34,7 +34,7 @@ namespace Bakis.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PostID")
+                    b.Property<int>("PostId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -42,9 +42,33 @@ namespace Bakis.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PostId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
+                });
+
+            modelBuilder.Entity("Bakis.Data.Models.CommentLike", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CommentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.ToTable("CommentLikes", (string)null);
                 });
 
             modelBuilder.Entity("Bakis.Data.Models.Friend", b =>
@@ -64,7 +88,7 @@ namespace Bakis.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Friends");
+                    b.ToTable("Friends", (string)null);
                 });
 
             modelBuilder.Entity("Bakis.Data.Models.FriendRequest", b =>
@@ -82,12 +106,12 @@ namespace Bakis.Data.Migrations
                     b.Property<string>("InvitedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("FriendRequests");
+                    b.ToTable("FriendRequests", (string)null);
                 });
 
             modelBuilder.Entity("Bakis.Data.Models.Like", b =>
@@ -105,13 +129,44 @@ namespace Bakis.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("Likes", (string)null);
+                });
+
+            modelBuilder.Entity("Bakis.Data.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("RoomId");
 
-                    b.ToTable("Likes");
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("Bakis.Data.Models.MyList", b =>
@@ -133,7 +188,7 @@ namespace Bakis.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Lists");
+                    b.ToTable("Lists", (string)null);
                 });
 
             modelBuilder.Entity("Bakis.Data.Models.Post", b =>
@@ -169,7 +224,24 @@ namespace Bakis.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
+                });
+
+            modelBuilder.Entity("Bakis.Data.Models.Room", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rooms", (string)null);
                 });
 
             modelBuilder.Entity("Bakis.Data.Models.User", b =>
@@ -249,6 +321,30 @@ namespace Bakis.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Bakis.Data.Models.UserRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRooms", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -386,20 +482,60 @@ namespace Bakis.Data.Migrations
 
             modelBuilder.Entity("Bakis.Data.Models.Comment", b =>
                 {
+                    b.HasOne("Bakis.Data.Models.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Bakis.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+
+                    b.Navigation("Post");
 
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Bakis.Data.Models.CommentLike", b =>
+                {
+                    b.HasOne("Bakis.Data.Models.Comment", "Comment")
+                        .WithMany()
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+                });
+
             modelBuilder.Entity("Bakis.Data.Models.Like", b =>
                 {
-                    b.HasOne("Bakis.Data.Models.User", "User")
+                    b.HasOne("Bakis.Data.Models.Post", "Post")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("Bakis.Data.Models.Message", b =>
+                {
+                    b.HasOne("Bakis.Data.Models.Room", "Room")
+                        .WithMany("Messages")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bakis.Data.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Bakis.Data.Models.MyList", b =>
@@ -416,6 +552,25 @@ namespace Bakis.Data.Migrations
                     b.HasOne("Bakis.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Bakis.Data.Models.UserRoom", b =>
+                {
+                    b.HasOne("Bakis.Data.Models.Room", "Room")
+                        .WithMany("UserRooms")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bakis.Data.Models.User", "User")
+                        .WithMany("UserRooms")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
 
                     b.Navigation("User");
                 });
@@ -469,6 +624,18 @@ namespace Bakis.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Bakis.Data.Models.Room", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("UserRooms");
+                });
+
+            modelBuilder.Entity("Bakis.Data.Models.User", b =>
+                {
+                    b.Navigation("UserRooms");
                 });
 #pragma warning restore 612, 618
         }

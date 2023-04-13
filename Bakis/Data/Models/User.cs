@@ -13,5 +13,8 @@ namespace Bakis.Data.Models
         public DateTime BirthDate { get; set; }
         [PersonalData]
         public int Age { get; set; }
+
+        public List<UserRoom> UserRooms { get; set; }
+        public virtual ICollection<Message> SentMessages { get; set; }
     }
 }
