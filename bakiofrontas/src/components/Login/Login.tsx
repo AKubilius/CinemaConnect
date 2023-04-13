@@ -42,6 +42,7 @@ const Login: React.FC = () => {
       sessionStorage.setItem("username", "client");
       sessionStorage.setItem("name", data.userName);
       sessionStorage.setItem("admin", data.admin);
+      sessionStorage.setItem("image", data.image64);
       window.location.href = "/";
     
     } catch (error: any) {

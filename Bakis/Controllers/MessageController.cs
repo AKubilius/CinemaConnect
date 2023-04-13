@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Bakis.Data.Migrations;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Bakis.Data.Models.DTOs;
 
 namespace Bakis.Controllers
 {
@@ -27,7 +28,24 @@ namespace Bakis.Controllers
         // [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<Message>>> Get()
         {
-            var allList = await _databaseContext.Messages.ToListAsync();
+            var allList = await _databaseContext.Messages
+        .Include(m => m.Sender)
+        .OrderByDescending(m => m.DateTime)
+        .Take(50)
+        .Select(m => new MessageDto
+        {
+            Id = m.Id,
+            Body = m.Body,
+            DateTime = m.DateTime,
+            Sender = new UserDto
+            {
+                Id = m.Sender.Id,
+                UserName = m.Sender.UserName
+                //Nuotrauka dar bus
+            }
+        })
+        .ToListAsync();
+
             return Ok(allList);
         }
 

@@ -124,9 +124,7 @@ export default function BasicTabs() {
       <NavBarRequests/>
       <NavBarNotifications/>
       
-      <Avatar sx={{
-        backgroundColor:'green'
-      }}></Avatar>
+      <Avatar src={`data:image/jpeg;base64,${sessionStorage.getItem("image")}`} ></Avatar>
       </Box>
       
     </Toolbar>

@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
-
+using Bakis.Data.Models.DTOs;
+using UserDto = Bakis.Data.Models.DTOs.UserDto;
 
 public class ChatHub : Hub
 {
@@ -85,23 +86,34 @@ public class ChatHub : Hub
         await Clients.Group(roomId).SendAsync("ReceiveMessage", user, message);
     }
 
-    public async Task<IEnumerable<Message>> LoadMessages(string roomId)
+    public async Task<IEnumerable<MessageDto>> LoadMessages(string roomId)
     {
         if (string.IsNullOrEmpty(roomId))
         {
             throw new ArgumentNullException(nameof(roomId), "Room ID cannot be null or empty.");
         }
 
-        var msg = _context.Messages
-            .Where(m => m.RoomId == Int32.Parse(roomId))
-            .OrderByDescending(m => m.DateTime)
-            .Take(50)
-            .ToListAsync();
+        var allList = await _context.Messages
+        .Where(m => m.RoomId == Int32.Parse(roomId))
+        .Include(m => m.Sender)
+        .OrderByDescending(m => m.DateTime)
+        .Take(50)
+        .Select(m => new MessageDto
+        {
+            Id = m.Id,
+            Body = m.Body,
+            DateTime = m.DateTime,
+            Sender = new UserDto
+            {
+                Id = m.Sender.Id,
+                UserName = m.Sender.UserName,
+                ProfileImageBase64 = m.Sender.ProfileImageBase64
+            }
+        })
+        .ToListAsync();
 
-        return await _context.Messages
-            .Where(m => m.RoomId == Int32.Parse(roomId))
-            .OrderByDescending(m => m.DateTime)
-            .Take(50)
-            .ToListAsync();
+
+
+        return allList;
     }
 }

@@ -29,14 +29,15 @@ const Users = () => {
   return (
     <div>
 
-{users?.slice(0,3).map((user: any, index: React.Key | null | undefined) => (
-                <User
-                    username={user.userName}
-                    name={user.name}
-                    surname={user.surname}
-                    id ={user.id}
-                />
-            ))}
+{users?.slice(0, 3).map((user: any, index: React.Key | null | undefined) => (
+  <User
+    username={user.userName}
+    name={user.name}
+    surname={user.surname}
+    image64={user.profileImageBase64}
+    id={user.id}
+  />
+))}
     </div>
   )
 }

@@ -33,6 +33,7 @@ const FriendsChat = () => {
                     username={user.userName}
                     name={user.name}
                     surname={user.surname}
+                    image64={user.profileImageBase64}
                     id ={user.id}
                 />
             ))}

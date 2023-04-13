@@ -7,4 +7,4 @@ public record LoginDto(string UserName, string Password);
 
 public record UserDto(string Id, string UserName, string Email);
 
-public record SuccessfulLoginDto(string AccessToken, string UserName, bool Admin, string Id);
+public record SuccessfulLoginDto(string AccessToken, string UserName, bool Admin, string Image64);

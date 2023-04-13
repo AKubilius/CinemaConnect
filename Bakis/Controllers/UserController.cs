@@ -77,7 +77,6 @@ namespace Bakis.Controllers
        // [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> Update(User request)
         {
-
             var Users = await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
             if (Users == null)
                 return BadRequest("User was not found");
@@ -88,5 +87,28 @@ namespace Bakis.Controllers
             return Ok(Users);
         }
 
+        [HttpPost("upload-image"), DisableRequestSizeLimit]
+        public async Task<ActionResult<List<User>>> UploadImage([FromForm] IFormFile imageFile)
+        {
+            var userId =  User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            var user = await _databaseContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            user.ProfileImageBase64 = ConvertImageToBase64String(imageFile);
+            await _databaseContext.SaveChangesAsync();
+
+            return Ok();
+        }
+        public static string ConvertImageToBase64String(IFormFile imageFile)
+        {
+            using var ms = new MemoryStream();
+            imageFile.CopyTo(ms);
+            var fileBytes = ms.ToArray();
+            return Convert.ToBase64String(fileBytes);
+        }
     }
 }

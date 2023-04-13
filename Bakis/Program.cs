@@ -49,6 +49,9 @@ builder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationH
 
 builder.Services.AddSignalR();
 
+
+
+
 var app = builder.Build();
 
 

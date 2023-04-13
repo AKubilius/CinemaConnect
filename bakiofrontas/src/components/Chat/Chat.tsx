@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import * as signalR from '@microsoft/signalr';
 import { useParams } from 'react-router-dom';
+import './Chat.css'
 
-interface Message {
-  user: string;
-  body: string;
+interface User{
+    userName: string;
 }
+interface Message {
+    sender: User;
+    body: string;
+    image64:string;
+  }
 
 const Chat: React.FC = () => {
     
@@ -35,10 +40,10 @@ const Chat: React.FC = () => {
       connection
         .start()
         .then(() => {
-          connection.on('ReceiveMessage', (user: string, body: string) => {
-            console.log('Received message:', { user, body });
-            setMessages((prevMessages) => [...prevMessages, { user, body}]);
-          });
+            connection.on('ReceiveMessage', (sender: User, body: string, image64: string) => {
+                
+                setMessages((prevMessages) => [...prevMessages, { sender, body, image64 }]);
+              });
   
           
         })
@@ -80,12 +85,9 @@ const Chat: React.FC = () => {
   
   
   const fetchMessages = async (roomID: string) => {
-    console.log('Getting Messages');
-    console.log(connection);
-    console.log(roomID);
     if (connection && roomID && connection.state === signalR.HubConnectionState.Connected) {
       const fetchedMessages = await connection.invoke('LoadMessages', roomID);
-      console.log(fetchedMessages);
+      
       setMessages(fetchedMessages);
     }
   };
@@ -97,10 +99,14 @@ const Chat: React.FC = () => {
   }
   return (
     <>
+    
  {messages.map((message, index) => (
-          <div key={index}>
-            <strong>{message.user}:</strong> {message.body}
-          </div>
+       <div
+       key={index}
+       className={`message ${message.sender.userName === userName ? 'my-message' : 'other-message'}`}
+     >
+       <div className="message-content">{message.body}</div>
+     </div>
         ))}
       
 

@@ -12,6 +12,7 @@ interface IUser {
   name: any;
   surname: any;
   id:any;
+  image64:string;
 }
 
 
@@ -19,6 +20,7 @@ const User: React.FC<IUser> = ({
   username,
   name,
   surname,
+  image64,
   id
 }) => {
 
@@ -94,7 +96,7 @@ const User: React.FC<IUser> = ({
 
   return (
     <div style={{display: 'flex'}}>
-      <Avatar sx={{ bgcolor: green[500],margin:2 }} variant="rounded" />
+      <Avatar  src={`data:image/jpeg;base64,${image64}`} sx={{ bgcolor: green[500],margin:2 }} variant="rounded" />
       <div className='user'>
       <p className='username'>{username}</p>
       <p className='name'>{name} {surname}</p>

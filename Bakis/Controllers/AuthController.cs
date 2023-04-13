@@ -58,15 +58,20 @@ namespace Bakis.Controllers
             if (!isPasswordValid)
                 return BadRequest("User name or password is invalid.");
 
+
+
+            //lyg nereikia
             var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id)
                 };
-
             var userIdentity = new ClaimsIdentity(claims, "login");
             var principal = new ClaimsPrincipal(userIdentity);
 
             await HttpContext.SignInAsync(principal);
+            // cia
+
+
             // valid user
             var roles = await _userManager.GetRolesAsync(user);
             bool aa = false;
@@ -78,7 +83,7 @@ namespace Bakis.Controllers
             }
             var accessToken = _jwtTokenService.CreateAccessToken(user.UserName, user.Id, roles);
 
-            return Ok(new SuccessfulLoginDto(accessToken, loginDto.UserName, aa, "Success"));
+            return Ok(new SuccessfulLoginDto(accessToken, loginDto.UserName, aa, user.ProfileImageBase64));
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Bakis.Data.Models
+﻿using Bakis.Auth.Model;
+
+namespace Bakis.Data.Models
 {
     public class Message
     {

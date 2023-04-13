@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Bakis.Data.Models.DTOs;
 
 namespace Bakis.Controllers
 {
@@ -31,13 +32,18 @@ namespace Bakis.Controllers
             if (List == null)
                 return NotFound();
 
-            var Comments = await _databaseContext.Comments.ToListAsync();
+            var Comments = await _databaseContext.Comments.Include(m => m.User)
+        .Take(50)
+        .ToListAsync();
+
+
             if (Comments == null)
                 return NoContent();
 
             var PostComments = Comments.Where(s => s.PostId == id).ToList();
             if (PostComments.Count == 0)
-                return NoContent();
+                return NoContent();      
+
             return Ok(PostComments);
         }
 
@@ -65,6 +71,10 @@ namespace Bakis.Controllers
         public async Task<ActionResult<List<Comment>>> LikePost(Comment comment) //STRINGAS ID MOVIE???? perdaryk
         {
             comment.UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            comment.User = await _databaseContext.Users.FindAsync(comment.UserId);
+
+
+
 
             _databaseContext.Comments.Add(comment);
             await _databaseContext.SaveChangesAsync();

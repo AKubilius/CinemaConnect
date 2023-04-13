@@ -51,6 +51,7 @@ const Post: React.FC<IPost> = ({
   const token = `Bearer ${sessionStorage.getItem("token")}`
 
 
+
   const handleLike = (Id: any) => {
     setPressedLike(!pressedLike);
     pressedLike ? unLikePost(Id) : likePost(Id)
@@ -298,7 +299,8 @@ const Post: React.FC<IPost> = ({
     <div className='post'>
       <Box sx={{ bgcolor: '#cfe8fc', borderRadius: 2, boxShadow: '0 4px 6px grey' }}>
         <Box sx={{ bgcolor: '#cfe8fc', display: 'flex' }}>
-          <Avatar sx={{ bgcolor: green[500], margin: 2 }} variant="rounded" />
+        
+          <Avatar  sx={{ bgcolor: green[500], margin: 2 }} variant="rounded" />
           <p> {body}</p>
         </Box>
 
@@ -352,7 +354,7 @@ const Post: React.FC<IPost> = ({
           
           <Box component="form" noValidate autoComplete="off" sx={{ display:'flex', flexDirection:'row', alignContent:'center', marginTop:2}}>
             <div style={{display:'grid',alignContent:'center', margin:10}}>
-            <Avatar/>
+            <Avatar src={`data:image/jpeg;base64,${sessionStorage.getItem("image")}`}/>
             </div>
           
 
@@ -377,17 +379,13 @@ const Post: React.FC<IPost> = ({
             display:'flex',flexDirection:'column'
             
           }}>
-            
             { comments ? comments?.slice(0,3).map((user: any, index: React.Key | null | undefined) => (
                 <Comments
                     body={user.body}
-                    img={user.user}
+                    img={user.user.profileImageBase64}
                     id ={user.id}
                 />
             )): null}
-            
-           
-
 </Box>
         </Box>
       </Box>

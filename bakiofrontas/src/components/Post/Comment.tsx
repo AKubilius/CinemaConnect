@@ -18,7 +18,7 @@ const Comments: React.FC<Comment> = ({
     
     <div style={{display:'flex'}}>
         <div style={{display:'flex',alignContent:'center', margin:10}}>
-            <Avatar  sx={{ width: 30, height: 30 }}></Avatar>
+            <Avatar  sx={{ width: 30, height: 30 }}   src={`data:image/jpeg;base64,${img}`} ></Avatar>
             </div>
             <Box  sx={{
                 display:'grid',
