@@ -1,4 +1,5 @@
 ﻿using Bakis.Data;
+using Bakis.Data.Models;
 using IO.Ably;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -27,16 +28,33 @@ namespace Bakis.Controllers
             API_KEY = configuration["TMDB:ApiKey"];
         }
 
-        public async Task<HashSet<int>> GetRecommendationsForUserIdsAsync(string userId1, string userId2)
+        public async Task<List<MovieDetails>> GetRecommendationsForUserIdsAsync(List<string> userIds, int page, int pageSize = 20)
         {
-            // Retrieve movie IDs from the database
-            var user1Movies = await GetUserMovieIdsAsync(userId1);
-            var user2Movies = await GetUserMovieIdsAsync(userId2);
+            var userRecommendations = new List<List<MovieDetails>>();
+            userIds.Add(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
 
-            // Get recommendations
-            var recommendations = await GetRecommendationsForMultipleUsers(new List<List<int>> { user1Movies, user2Movies });
+            foreach (var userId in userIds)
+            {
+                var userMovies = await GetUserMovieIdsAsync(userId);
+                var recommendations = new List<MovieDetails>();
 
-            return recommendations;
+                foreach (var movieId in userMovies)
+                {
+                    var movieRecommendations = await GetRecommendations(movieId, page);
+                    recommendations.AddRange(movieRecommendations);
+                }
+
+                userRecommendations.Add(recommendations);
+            }
+
+            // Find the common movies in each user's recommendations
+            var commonMovies = GetCommonRecommendations(userRecommendations);
+
+            // Paginate the common movies
+            return commonMovies
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
         }
 
         public async Task<List<int>> GetUserMovieIdsAsync(string userId)
@@ -48,29 +66,32 @@ namespace Bakis.Controllers
             return movieList.Select(list => int.Parse(list.MovieID)).ToList();
         }
 
-        [HttpGet("recommendations/{userId1}")]
-        public async Task<IActionResult> GetRecommendations(string userId1)
+        [HttpGet("recommendations")]
+        public async Task<IActionResult> GetRecommendations([FromQuery] List<string> userIds, [FromQuery] int page = 1)
         {
-                var userId2 = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-                var recommendations = await GetRecommendationsForUserIdsAsync(userId1, userId2);
-                return Ok(new { Recommendations = recommendations });
+            var recommendations = await GetRecommendationsForUserIdsAsync(userIds, page);
+            return Ok(new { Recommendations = recommendations });
         }
 
-        public async Task<HashSet<int>> GetRecommendationsForMultipleUsers(List<List<int>> userMovieLists)
+        public async Task<List<MovieDetails>> GetRecommendationsForMultipleUsers(List<List<int>> userMovieLists, int page, int pageSize = 20)
         {
             var combinedMovieList = GetCombinedMovieList(userMovieLists);
-            var recommendationsSet = new HashSet<int>();
+            var userRecommendations = new List<List<MovieDetails>>();
 
             foreach (var movieId in combinedMovieList)
             {
-                var recommendations = await GetRecommendations(movieId);
-                foreach (var recommendation in recommendations)
-                {
-                    recommendationsSet.Add(recommendation);
-                }
+                var recommendations = await GetRecommendations(movieId, page);
+                userRecommendations.Add(recommendations);
             }
 
-            return recommendationsSet;
+            // Find the common movies in each user's recommendations
+            var commonMovies = GetCommonRecommendations(userRecommendations);
+
+            // Paginate the common movies
+            return commonMovies
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
         }
 
         private HashSet<int> GetCombinedMovieList(List<List<int>> userMovieLists)
@@ -86,21 +107,41 @@ namespace Bakis.Controllers
             return combinedList;
         }
 
-        private async Task<List<int>> GetRecommendations(int movieId)
+        private async Task<List<MovieDetails>> GetRecommendations(int movieId, int page)
         {
-            var url = $"{TmdbApiBase}/movie/{movieId}/recommendations?api_key={API_KEY}";
+            var url = $"{TmdbApiBase}/movie/{movieId}/recommendations?api_key={API_KEY}&page={page}";
             var response = await _httpClient.GetAsync(url);
             var content = await response.Content.ReadAsStringAsync();
 
             dynamic json = JObject.Parse(content);
-            var recommendations = new List<int>();
+            var recommendations = new List<MovieDetails>();
 
             foreach (var movie in json.results)
             {
-                recommendations.Add((int)movie.id);
+                var movieDetails = new MovieDetails
+                {
+                    Id = (int)movie.id,
+                    Title = (string)movie.title,
+                    backdrop_path = (string)movie.backdrop_path,
+                    poster_path = (string)movie.poster_path,
+                    release_date = (string)movie.release_date,
+                };
+
+                recommendations.Add(movieDetails);
             }
 
             return recommendations;
+        }
+        private List<MovieDetails> GetCommonRecommendations(List<List<MovieDetails>> userRecommendations)
+        {
+            return userRecommendations
+                .Skip(1)
+                .Aggregate(new HashSet<MovieDetails>(userRecommendations.First(), new MovieDetailsComparer()), (h, e) =>
+                {
+                    h.IntersectWith(e);
+                    return h;
+                })
+                .ToList();
         }
 
 

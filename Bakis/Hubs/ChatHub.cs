@@ -96,8 +96,7 @@ public class ChatHub : Hub
         var allList = await _context.Messages
         .Where(m => m.RoomId == Int32.Parse(roomId))
         .Include(m => m.Sender)
-        .OrderByDescending(m => m.DateTime)
-        .Take(50)
+        .Take(100)
         .Select(m => new MessageDto
         {
             Id = m.Id,

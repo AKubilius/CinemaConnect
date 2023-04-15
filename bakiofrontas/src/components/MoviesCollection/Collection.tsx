@@ -15,8 +15,36 @@ const [loading, setLoading] = useState<boolean>(false);
   const type = 'discover/movie'
   const [movies, setMovies] = useState<any[]>([])
   const { id } = useParams()
+  const token = `Bearer ${sessionStorage.getItem("token")}`
 
-  const fetch = async (page: number) => {
+
+  const [userIds, setUserIds] = useState<any>([]);
+
+  const pathname = window.location.pathname;
+
+
+  const fetchRecoms = async (page: number) => {
+    setLoading(true);
+    const { data: { recommendations } } = await axios.get(`https://localhost:7019/api/Recommendation/recommendations`, {
+      params: {
+        userIds: userIds, // Replace with the actual user IDs
+        page: page,
+      },
+      headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        },
+    });
+
+    setMovies((prevMovies) => [...prevMovies, ...recommendations]);
+    setPage((prevPage) => prevPage + 1);
+    setLoading(false);
+  };
+
+  
+
+  const fetchMovies= async (page: number) => {
     setLoading(true);
     const { data: { results } } = await axios.get(`${API}${type}`, {
       params: {
@@ -32,8 +60,11 @@ const [loading, setLoading] = useState<boolean>(false);
   };
 
   useEffect(() => {
-    fetch(page);
-  }, []);
+    if (pathname === '/movies')
+      fetchMovies(page);
+    else if (pathname === '/recommendations')
+      fetchRecoms(page);
+  }, [pathname]);
 
 
   const handleOnScroll = () => {
@@ -42,7 +73,11 @@ const [loading, setLoading] = useState<boolean>(false);
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
   
     if (scrollTop + windowHeight >= documentHeight - 100 && !loading) {
-      fetch(page);
+      if (pathname === '/movies') {
+        fetchMovies(page);
+      } else if (pathname === '/recommendations') {
+        fetchRecoms(page);
+      }
     }
   };
 

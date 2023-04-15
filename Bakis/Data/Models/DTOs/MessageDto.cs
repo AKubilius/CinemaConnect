@@ -6,6 +6,7 @@ namespace Bakis.Data.Models.DTOs
     {
         public int Id { get; set; }
         public string Body { get; set; }
+        public int RoomId { get; set; }
         public DateTime DateTime { get; set; }
         public UserDto Sender { get; set; }
     }

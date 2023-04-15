@@ -37,6 +37,7 @@ namespace Bakis.Controllers
             Id = m.Id,
             Body = m.Body,
             DateTime = m.DateTime,
+            RoomId = m.RoomId,
             Sender = new UserDto
             {
                 Id = m.Sender.Id,

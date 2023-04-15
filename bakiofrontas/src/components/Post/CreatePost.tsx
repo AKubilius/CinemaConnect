@@ -31,7 +31,7 @@ export default function BasicModal(movie: any) {
     setOpen(false);
     CreatePost();
   }
-console.log(movie)
+
 
 
   const token = `Bearer ${sessionStorage.getItem("token")}`
@@ -55,8 +55,7 @@ console.log(movie)
               },
             },
           );
-          console.log(JSON.stringify(data, null, 4));
-          console.log(status);
+
       
           return data;
         } catch (error) {
