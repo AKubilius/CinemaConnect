@@ -1,28 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import More from '@mui/icons-material/MoreHoriz';
-
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
-import ShareIcon from '@mui/icons-material/Share';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
-import { deepOrange, green } from '@mui/material/colors';
-import Rating from '@mui/material/Rating';
-import CircularProgress from '@mui/material/CircularProgress';
+import { green } from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import './Post.css'
 import axios from 'axios';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
-import CommentIcon from '@mui/icons-material/Comment';
 import IconButton from '@mui/material/IconButton/IconButton';
 import TextField from '@mui/material/TextField/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl, { useFormControl } from '@mui/material/FormControl';
-import InputBase from '@mui/material/InputBase';
 import Comments  from './Comment';
+import {makePostRequest, makeDeleteRequest} from "../Api/Api";
 
 interface IPost {
   id: any;
@@ -30,9 +19,7 @@ interface IPost {
   createdDate: any;
   imageUrl: any;
   movieId: any;
-
 }
-
 
 const Post: React.FC<IPost> = ({
   id,
@@ -40,7 +27,6 @@ const Post: React.FC<IPost> = ({
   createdDate,
   imageUrl,
   movieId
-
 }) => {
 
   const [pressed, setPressed] = useState(true);
@@ -50,22 +36,16 @@ const Post: React.FC<IPost> = ({
 
   const token = `Bearer ${sessionStorage.getItem("token")}`
 
-
-
   const handleLike = (Id: any) => {
     setPressedLike(!pressedLike);
     pressedLike ? unLikePost(Id) : likePost(Id)
     pressedLike ? setLikes(likes - 1) : setLikes(likes + 1)
-
   };
-
 
   const handleClick = (Id: any) => {
     setPressed(!pressed);
     pressed ? createRequest(Id) : deleteUser(Id)
   };
-
-
 
   const [value, setValue] = useState('');
 
@@ -87,35 +67,12 @@ const Post: React.FC<IPost> = ({
     setValue(event.target.value);
   };
 
-
   async function commentPost(body: string) {
+    const { data, status } = await makePostRequest('https://localhost:7019/api/Comment', { Body: body, postId: id });
+    
+    //setCreatedId(JSON.stringify(data, null, 4));
 
-    try {
-     
-      const { data, status } = await axios.post<any>('https://localhost:7019/api/Comment',
-        { Body: body, postId:id },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: token
-          },
-        },
-      );
-
-      //setCreatedId(JSON.stringify(data, null, 4));
-
-      return data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log('error message: ', error.message);
-
-        return error.message;
-      } else {
-        console.log('unexpected error: ', error);
-        return 'An unexpected error occurred';
-      }
-    }
+    return data;
   }
 
   const fetchComments = async () => {
@@ -156,7 +113,6 @@ const Post: React.FC<IPost> = ({
   }, [])
 
   const fetchIsLiked = async () => {
-
     const { data } = await axios.get(`https://localhost:7019/like/isliked/${id}`,
       {
         headers: {
@@ -165,134 +121,35 @@ const Post: React.FC<IPost> = ({
           Authorization: token
         },
       })
+
     setPressedLike(data)
-
-
   }
   useEffect(() => {
     fetchIsLiked()
   }, [])
 
   async function likePost(Id: any) {
-
-    try {
-      console.log(Id.movieId)
-      const { data, status } = await axios.post<any>('https://localhost:7019/Like',
-        { PostId: Id.id },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: token
-          },
-        },
-      );
-
-      //setCreatedId(JSON.stringify(data, null, 4));
-
-      return data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log('error message: ', error.message);
-
-        return error.message;
-      } else {
-        console.log('unexpected error: ', error);
-        return 'An unexpected error occurred';
-      }
-    }
-
+    const { data } = await makePostRequest('https://localhost:7019/Like', { PostId: Id.id });
+    
+    return data;
   }
+  
   async function unLikePost(Id: any) {
-    try {
-      console.log(Id)
-      // 👇️ const data: UpdateUserResponse
-      const { data, status } = await axios.delete<any>(
-        `https://localhost:7019/Like/${Id.id}`,
-        {
-          headers: {
-            Accept: 'application/json',
-            Authorization: token
-          },
-        },
-      );
+    const { data } = await makeDeleteRequest(`https://localhost:7019/Like/${Id.id}`);
 
-      console.log('response is: ', data);
-
-      // 👇️ response status is: 204
-      console.log('response status is: ', status);
-
-      return data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log('error message: ', error.message);
-        // 👇️ error: AxiosError<any, any>
-        return error.message;
-      } else {
-        console.log('unexpected error: ', error);
-        return 'An unexpected error occurred';
-      }
-    }
+    return data;
   }
 
   async function createRequest(Id: any) {
-    try {
-      console.log(Id.movieId)
-      const { data, status } = await axios.post<any>('https://localhost:7019/List',
-        { MovieID: `${Id.movieId}` },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: token
-          },
-        },
-      );
-
-      //setCreatedId(JSON.stringify(data, null, 4));
-
-      return data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log('error message: ', error.message);
-
-        return error.message;
-      } else {
-        console.log('unexpected error: ', error);
-        return 'An unexpected error occurred';
-      }
-    }
+    const { data } = await makePostRequest('https://localhost:7019/List', { MovieID: `${Id.movieId}` });
+    
+    return data;
   }
 
   async function deleteUser(Id: any) {
-    try {
-      // 👇️ const data: UpdateUserResponse
-      const { data, status } = await axios.delete<any>(
-        `https://localhost:7019/List/${Id.movieId}`,
-        {
-          headers: {
-            Accept: 'application/json',
-            Authorization: token
-          },
-        },
-      );
+    const { data } = await makeDeleteRequest(`https://localhost:7019/List/${Id.movieId}`);
 
-      console.log('response is: ', data);
-
-      // 👇️ response status is: 204
-      console.log('response status is: ', status);
-
-      return data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log('error message: ', error.message);
-        // 👇️ error: AxiosError<any, any>
-        return error.message;
-      } else {
-        console.log('unexpected error: ', error);
-        return 'An unexpected error occurred';
-      }
-    }
+    return data;
   }
 
   return (
