@@ -69,6 +69,7 @@ namespace Bakis.Controllers
         [HttpGet("recommendations")]
         public async Task<IActionResult> GetRecommendations([FromQuery] List<string> userIds, [FromQuery] int page = 1)
         {
+            userIds.Remove("undefined");
             var recommendations = await GetRecommendationsForUserIdsAsync(userIds, page);
             return Ok(new { Recommendations = recommendations });
         }

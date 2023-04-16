@@ -3,6 +3,7 @@ using Bakis.Data;
 using Bakis.Data.Models;
 using IO.Ably;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
@@ -111,12 +112,14 @@ namespace Bakis.Controllers
             return compatibilityPercentage;
         }
 
-        [HttpGet("compatibility/{userId1}")]
-        public async Task<IActionResult> GetCompatibility(string userId1)
-        { 
+        [HttpGet("compatibility/{userName}")]
+        public async Task<IActionResult> GetCompatibility(string userName)
+        {
+
+            var user = await _databaseContext.Users.SingleOrDefaultAsync(u => u.UserName == userName);
 
             var userId2 = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            var compatibility = await CalculateCompatibility(userId1, userId2);
+            var compatibility = await CalculateCompatibility(user.Id, userId2);
             return Ok(new { Compatibility = compatibility });
         }
 

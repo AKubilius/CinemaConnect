@@ -57,6 +57,27 @@ namespace Bakis.Controllers
             return Ok(users);
         }
 
+        [HttpGet("current")]
+        //[Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<User>>> GetCurrentUser()
+        {
+            var Users = await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
+            if (Users == null)
+                return BadRequest("There are no users available");
+            return Ok(Users);
+        }
+
+        [HttpGet("{userName}")]
+        //[Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<User>>> GetCurrentUser(string userName)
+        {
+            var user = await _databaseContext.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+            if (user == null)
+                return BadRequest("There are no user available");
+            return Ok(user);
+        }
+
+
         [HttpGet]
         //[Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> GetUsers()// Getinam friends dar, ir juos irgi istrinam is listo
