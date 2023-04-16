@@ -22,6 +22,8 @@ import Filter from '../Filter/Filter';
 import { useParams } from 'react-router-dom';
 import SearchBar from '../SearchBar/SearchBar';
 import { useState } from 'react';
+import AddFriends from '../Recommendations/AddFriends';
+import Recommendations from '../Recommendations/Recommendations';
 
 interface Movie {
     id: number;
@@ -56,7 +58,7 @@ const RecomContainer: React.FC = () => {
                                                 theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
                                         }}>
                                         <aside>
-                                          <Users/>
+                                         <AddFriends/>
                                         </aside>
                                     </Paper>
                                 </Grid>
@@ -69,7 +71,7 @@ const RecomContainer: React.FC = () => {
                                                 theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
                                         }}>
                                          <main>
-                                         <Collection/>
+                                         <Recommendations/>
                                         </main>
                                     </Paper>
                                 </Grid>

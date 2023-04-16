@@ -1,9 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './Collection.css'
 import { Box, Button } from '@mui/material'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from 'axios';
-import CreatePost from '../Post/CreatePost';
+import CreatePost from './CreatePost';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import SendToFriend from './SendToFriend';
+
 
 interface IPost {
     id: any;
@@ -11,6 +17,7 @@ interface IPost {
     createdDate: any;
     title: any;
     backdrop_path:any;
+    friends:any[] | null; 
 
 }
 
@@ -20,11 +27,13 @@ const Movie: React.FC<IPost> = ({
     poster_path,
     backdrop_path,
     createdDate,
-    title
-
-
+    title,
+    friends
 
 }) => {
+
+   
+
     return (
 
         <div className='collection'>
@@ -32,8 +41,6 @@ const Movie: React.FC<IPost> = ({
             <Box >
                 <Box sx={{ bgcolor: '#cfe8fc', display: 'flex', borderRadius: 2, width: '100%', boxShadow: '0 4px 6px grey' }}>
                     <div className='movies'>
-
-
                         <Box
                             component="img"
                             sx={{
@@ -50,22 +57,26 @@ const Movie: React.FC<IPost> = ({
                             <a href={`/movie/${id}`}>{title}</a>
 
                             <Box sx={{ borderRadius: 2, marginBottom: 0, display: 'flex', flexDirection: 'flex', alignItems: 'end', justifyContent: 'left', marginTop: 15 }}>
-                                <Button sx={{
-                                    borderRadius: 5,
-                                    margin: 1
-                                }} startIcon={<AddCircleIcon />} variant="text">Pasidalinti</Button>
+
+                                <SendToFriend
+                                friends={friends}
+                                movieId={id}
+                                imgUrl={backdrop_path}
+                                body={title}
+                                />
                                 <CreatePost
+                                
                                     movieId={id}
                                     imgUrl={backdrop_path}
                                     body={title}
                                 />
-
                             </Box>
                         </Box>
                     </div>
                 </Box>
 
             </Box>
+          
         </div>
     )
 }
