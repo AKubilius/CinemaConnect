@@ -129,31 +129,25 @@ const Post: React.FC<IPost> = ({
   }, [])
 
   async function likePost(Id: any) {
-    const { data, status } = await makePostRequest('https://localhost:7019/Like', { PostId: Id.id });
+    const { data } = await makePostRequest('https://localhost:7019/Like', { PostId: Id.id });
     
     return data;
   }
   
   async function unLikePost(Id: any) {
-    const { data, status } = await makeDeleteRequest(`https://localhost:7019/Like/${Id.id}`);
-
-    console.log('response is: ', data);
-    console.log('response status is: ', status);
+    const { data } = await makeDeleteRequest(`https://localhost:7019/Like/${Id.id}`);
 
     return data;
   }
 
   async function createRequest(Id: any) {
-    const { data, status } = await makePostRequest('https://localhost:7019/List', { MovieID: `${Id.movieId}` });
+    const { data } = await makePostRequest('https://localhost:7019/List', { MovieID: `${Id.movieId}` });
     
     return data;
   }
 
   async function deleteUser(Id: any) {
-    const { data, status } = await makeDeleteRequest(`https://localhost:7019/List/${Id.movieId}`);
-
-    console.log('response is: ', data);
-    console.log('response status is: ', status);
+    const { data } = await makeDeleteRequest(`https://localhost:7019/List/${Id.movieId}`);
 
     return data;
   }
