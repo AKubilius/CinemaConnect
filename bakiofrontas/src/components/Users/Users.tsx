@@ -1,7 +1,6 @@
 import React from 'react'
 import {useEffect, useState} from 'react'
 import axios,{ AxiosRequestConfig } from 'axios'
-import Grid from '@mui/material/Grid/Grid';
 import User from './User';
 
 const Users = () => {
@@ -28,16 +27,16 @@ const Users = () => {
 
   return (
     <div>
-
-{users?.slice(0, 3).map((user: any, index: React.Key | null | undefined) => (
-  <User
-    username={user.userName}
-    name={user.name}
-    surname={user.surname}
-    image64={user.profileImageBase64}
-    id={user.id}
-  />
-))}
+      {users?.slice(0, 3).map((user: any, index: React.Key | null | undefined) => (
+        <User
+          username={user.userName}
+          name={user.name}
+          surname={user.surname}
+          image64={user.profileImageBase64}
+          id={user.id}
+          key={user.id}
+        />
+      ))}
     </div>
   )
 }

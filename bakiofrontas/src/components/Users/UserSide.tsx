@@ -1,18 +1,18 @@
 import Avatar from '@mui/material/Avatar/Avatar'
 import Box from '@mui/material/Box/Box'
 import Users from './Users'
-import { blueGrey } from '@mui/material/colors'
 
 const UserSide = () => {
-  const avatarSx = { bgcolor: blueGrey[900], margin: 2 };
+  const avatarSx = { margin: 2 };
+  const boxSx = { borderBottom:1, display: 'flex'}
 
   return (
     <div className='userSide'>
-        <Box sx={{ borderBottom:1, display: 'flex'}}>
+        <Box sx={boxSx}>
             <Avatar src={`data:image/jpeg;base64,${sessionStorage.getItem("image")}`} sx={avatarSx} variant="rounded" />
-            <p>
-              <a href={'/profile'} style={{ color:'black', textDecoration:'none'}}>{sessionStorage.getItem("name")}</a>
-            </p>
+            <h4>
+              <a href={'/profile'} style={{ color:'white', textDecoration:'none'}}>{sessionStorage.getItem("name")}</a>
+            </h4>
         </Box>
 
         <p>Siūlomi nariai</p>

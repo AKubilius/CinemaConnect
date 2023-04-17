@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Avatar from '@mui/material/Avatar';
-import { blueGrey, red } from '@mui/material/colors';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1';
 import './User.css';
@@ -39,22 +38,23 @@ const User: React.FC<IUser> = ({
       return await makeDeleteRequest(`https://localhost:7019/FriendRequest/${Id.id}`);
   }
 
-  const avatarSx = { bgcolor: blueGrey[900], margin: 2 };
-  const pressedButtonSx = { bgcolor: blueGrey[900], margin: 2 };
-  const errorButtonSx = { bgcolor: red[900], margin: 2 };
+  const sx = {
+     margin: 2
+    };
 
   return (
     <div style={{display: 'flex'}}>
-      <Avatar src={`data:image/jpeg;base64,${image64}`} sx={avatarSx} variant="rounded" />
+      <Avatar src={`data:image/jpeg;base64,${image64}`} sx={sx} variant="rounded" />
       <div className='user'>
-        <p className='username'>{username}</p>
-        <p className='name'>{name} {surname}</p>
+        <h4>{username}</h4>
+        <h5>{name} {surname}</h5>
       </div>
       <div className='addButton'>
 
         <Button
           onClick={() => handleClick({id})} 
-          sx={pressed ? pressedButtonSx : errorButtonSx } 
+          sx={sx} 
+          color={pressed ? 'primary': 'secondary' } 
           variant="contained"
         >
           {pressed ? <PersonAddAlt1OutlinedIcon/> : <PersonRemoveAlt1Icon/>}

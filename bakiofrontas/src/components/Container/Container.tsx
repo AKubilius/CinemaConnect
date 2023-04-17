@@ -20,9 +20,9 @@ import Movie from '../MoviesCollection/Movie';
 
 export default function SimpleContainer() {
     const [value, setValue] = React.useState<boolean>(true);
+    
     return (
-
-        <>
+    <>
       <CssBaseline />
       <Container maxWidth="xl" className="container">
         <Box>
