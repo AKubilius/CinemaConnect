@@ -32,8 +32,6 @@ export default function BasicModal(movie: any) {
     CreatePost();
   }
 
-
-
   const token = `Bearer ${sessionStorage.getItem("token")}`
     function HandleClick(params:any) {
         

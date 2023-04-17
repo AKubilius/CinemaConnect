@@ -43,9 +43,10 @@ export const RightSideBar = () => {
         <p className='todays-actual-header'>Šios dienos aktualiausi</p>
         <Grid container  columnSpacing={{ xs: 5, sm: 5, md: 1 }}>
           {movies?.slice(0,6).map((movie: any, index: React.Key | null | undefined) => (
-            <Grid item xs={6}>
+            <Grid key={index} item xs={6}>
                 <RightMovie
                     id={movie.id}
+                    key={movie.id}
                     title={movie.title}
                     posterPath={movie.poster_path}
                     createdDate ={movie.release_date}

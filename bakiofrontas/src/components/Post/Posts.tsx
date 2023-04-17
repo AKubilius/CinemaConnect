@@ -80,21 +80,20 @@ const Posts : React.FC = () => {
           window.removeEventListener('scroll', handleOnScroll);
         };
       }, [totalPosts, handleOnScroll]);
+
     return (
-        <div>
-          
-            {posts?.map((post: any, index: React.Key | null | undefined) => (
-                <Post
-                    id={post.id}
-                    body={post.body}
-                    imageUrl={post.imageUrl}
-                    movieId={post.movieId}
-                    createdDate ={post.createdDate}
-                    key={index}
-                />
-            ))}
-           
-        </div>
+      <>
+        {posts?.map((post: any, index: React.Key | null | undefined) => (
+          <Post
+            id={post.id}
+            body={post.body}
+            imageUrl={post.imageUrl}
+            movieId={post.movieId}
+            createdDate ={post.createdDate}
+            key={index}
+          />
+          ))}
+      </>
     )
 }
 

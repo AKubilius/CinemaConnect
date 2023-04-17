@@ -161,20 +161,18 @@ const Post: React.FC<IPost> = ({
 
   const neutralButtonSx = {
     ...buttonSx,
-    color: blueGrey[900]
   };
 
   const deleteButtonSx = {
     ...buttonSx,
-    color: red[900]
   };
 
   return (
     <div className='post'>
-      <Box sx={{ borderRadius: 5, boxShadow: '0 4px 6px grey' }}>
+      <Box sx={{ borderRadius: 5, border: '2px solid' }}>
         <Box sx={{ display: 'flex' }}>
           <Avatar sx={{ bgcolor: blueGrey[900], margin: 2 }} variant="rounded" />
-          <p>{body}</p>
+          <h3>{body}</h3>
         </Box>
         
         <Box
@@ -196,6 +194,7 @@ const Post: React.FC<IPost> = ({
               sx={pressed ? neutralButtonSx : deleteButtonSx} 
               startIcon={pressed ? <AddCircleIcon /> : <DeleteIcon/> } 
               variant="text"
+              color={pressed ? 'primary': 'secondary' } 
             >
               {pressed ? "Pridėti" : "Pašalinti"}
             </Button>
@@ -228,6 +227,7 @@ const Post: React.FC<IPost> = ({
                     body={user.body}
                     img={user.user.profileImageBase64}
                     id ={user.id}
+                    key = {user.id}
                 />
             )): null}
           </Box>
