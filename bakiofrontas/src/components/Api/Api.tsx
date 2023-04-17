@@ -61,5 +61,4 @@ async function handleError(error: any) {
     return "An unexpected error occurred";
   }
 }
-
 export { api, authConfig, makePostRequest, makeDeleteRequest};
