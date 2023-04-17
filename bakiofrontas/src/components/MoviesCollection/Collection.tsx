@@ -6,10 +6,8 @@ import Movie from './Movie'
 import { useParams } from 'react-router-dom'
 export default function Collection() {
 
-
-
   const [page, setPage] = useState<number>(1);
-const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const API = 'https://api.themoviedb.org/3/'
   const type = 'discover/movie'
@@ -40,10 +38,6 @@ const [loading, setLoading] = useState<boolean>(false);
       fetch()
   }, [])
 
-
-
-
-
   const fetchMovies= async (page: number) => {
     setLoading(true);
     const { data: { results } } = await axios.get(`${API}${type}`, {
@@ -66,11 +60,6 @@ const [loading, setLoading] = useState<boolean>(false);
     
   }, [pathname]);
 
- 
-
-
-  
-
   const handleOnScroll = () => {
     const windowHeight = window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
@@ -90,10 +79,7 @@ const [loading, setLoading] = useState<boolean>(false);
   }, [page, loading]);
 
   return (
-    <>
-   
     <div className='collection'>
-
       {movies?.map((movie: any, index: React.Key | null | undefined) => (
                 <Movie
                     friends={friends}
@@ -106,6 +92,5 @@ const [loading, setLoading] = useState<boolean>(false);
                 />
             ))}
     </div>
-    </>
   )
 }

@@ -1,6 +1,7 @@
 import Avatar from '@mui/material/Avatar/Avatar'
 import Box from '@mui/material/Box/Box'
 import Users from './Users'
+import { Link } from '@mui/material';
 
 const UserSide = () => {
   const avatarSx = { margin: 2 };
@@ -11,7 +12,7 @@ const UserSide = () => {
         <Box sx={boxSx}>
             <Avatar src={`data:image/jpeg;base64,${sessionStorage.getItem("image")}`} sx={avatarSx} variant="rounded" />
             <h4>
-              <a href={'/profile'} style={{ color:'white', textDecoration:'none'}}>{sessionStorage.getItem("name")}</a>
+              <Link href={'/profile'} style={{textDecoration:'none'}}>{sessionStorage.getItem("name")}</Link>
             </h4>
         </Box>
 
