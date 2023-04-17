@@ -78,7 +78,6 @@ namespace Bakis.Controllers
             friend.InvitedBy = Users.Id;
             friend.Name = Users.UserName;
             
-          // friend.Name = 
             var List =  _databaseContext.FriendRequests.SingleOrDefault(e => e.FriendId == friend.FriendId && e.InvitedBy == friend.InvitedBy);
             if (List !=null)
             {
