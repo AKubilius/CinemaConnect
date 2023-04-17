@@ -24,7 +24,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet("friends")]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> GetFriends()// Gettinam tik dabartinio žmogaus draugus,pasiimam userį, pasiimam visus friends ir where userid imam listą userių, kurių id yra friends
         {
             var Friends = await _databaseContext.Friends.ToListAsync();

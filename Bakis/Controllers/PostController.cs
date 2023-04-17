@@ -20,13 +20,12 @@ namespace Bakis.Controllers
         public PostController(ApplicationDbContext context, IAuthorizationService authorizationService)
         {
             _databaseContext = context;
-
             _authorizationService = authorizationService;
         }
 
         [HttpGet]
         //[Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<Post>>> Get(int page = 1, int pageSize = 100)
+        public async Task<ActionResult<List<Post>>> Get(int page = 1, int pageSize = 2)
         {
             var allList = await _databaseContext.Posts.ToListAsync();
 
@@ -55,6 +54,64 @@ namespace Bakis.Controllers
 
             return Ok(items);
         }
+
+        [HttpGet("profile/{userName?}")]
+        //[Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<Post>>> GetUserPost(string? userName,int page = 1, int pageSize = 2)
+        {
+            List<Post> allList = new List<Post>();
+            User user = new User();
+            if (userName == null || userName == "undefined")
+            {
+                var UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+                user = await _databaseContext.Users.SingleOrDefaultAsync(e => e.Id == UserId);
+            }
+            else
+            {
+                user = await _databaseContext.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+            }
+
+            allList = await _databaseContext.Posts
+   .Where(post => post.UserId == user.Id)
+   .ToListAsync();
+
+            // var allList = await _databaseContext.Posts.ToListAsync();
+
+            var totalItems = allList.Count();
+
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            var items = allList.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            var metadata = new
+            {
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                PageSize = pageSize,
+                CurrentPage = page
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            if (allList.Count == 0)
+                return BadRequest("User has nothing in list");
+
+            //var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
+            //if (List.Count == 0)
+            //    return BadRequest("User has nothing in list");
+
+            return Ok(items);
+        }
+
+        [HttpGet("total")]
+        //[Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<Post>>> GetPostsCount()
+        {
+            var allList = await _databaseContext.Posts.ToListAsync();
+            var totalItems = allList.Count();
+            return Ok(totalItems);
+        }
+
         [HttpPost]
         [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<Post>>> Create(Post List)
@@ -76,7 +133,6 @@ namespace Bakis.Controllers
 
             //_databaseContext.FriendRequests.RemoveRange(allList);
             //await _databaseContext.SaveChangesAsync();
-
 
             var authResult = await _authorizationService.AuthorizeAsync(User, List, PolicyNames.ResourceOwner);
             if (!authResult.Succeeded)

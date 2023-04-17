@@ -36,7 +36,7 @@ namespace Bakis.Controllers
             var allList = await _databaseContext.Lists.ToListAsync();
             if (allList.Count == 0)
                 return BadRequest("User has nothing in list");
-            var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
+            var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();//cia ne tiap
             if (List.Count == 0)
                 return BadRequest("User has nothing in list");
             return Ok(List);

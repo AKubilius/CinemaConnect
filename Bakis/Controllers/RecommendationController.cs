@@ -144,8 +144,6 @@ namespace Bakis.Controllers
                 })
                 .ToList();
         }
-
-
     }
   
 
