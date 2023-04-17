@@ -17,32 +17,32 @@ const [loading, setLoading] = useState<boolean>(false);
   const { id } = useParams()
   const token = `Bearer ${sessionStorage.getItem("token")}`
 
-
-  const [userIds, setUserIds] = useState<any>([]);
+  const [showUserListModal, setShowUserListModal] = useState(false);
 
   const pathname = window.location.pathname;
 
+  const[friends,setFriends] = useState<any>([]);  
+  const fetch = async () =>{
+      
+      const {data} = await axios.get(`https://localhost:7019/user/friends`,
+      {
+          headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: token
+            },
+      })
+      setFriends(data)
+      console.log(data)
 
-  const fetchRecoms = async (page: number) => {
-    setLoading(true);
-    const { data: { recommendations } } = await axios.get(`https://localhost:7019/api/Recommendation/recommendations`, {
-      params: {
-        userIds: userIds, // Replace with the actual user IDs
-        page: page,
-      },
-      headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: token
-        },
-    });
+  }
+  useEffect(()=>{
+      fetch()
+  }, [])
 
-    setMovies((prevMovies) => [...prevMovies, ...recommendations]);
-    setPage((prevPage) => prevPage + 1);
-    setLoading(false);
-  };
 
-  
+
+
 
   const fetchMovies= async (page: number) => {
     setLoading(true);
@@ -60,12 +60,16 @@ const [loading, setLoading] = useState<boolean>(false);
   };
 
   useEffect(() => {
-    if (pathname === '/movies')
-      fetchMovies(page);
-    else if (pathname === '/recommendations')
-      fetchRecoms(page);
+    setMovies([]);
+    setPage(1);
+    fetchMovies(page);
+    
   }, [pathname]);
 
+ 
+
+
+  
 
   const handleOnScroll = () => {
     const windowHeight = window.innerHeight;
@@ -73,11 +77,8 @@ const [loading, setLoading] = useState<boolean>(false);
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
   
     if (scrollTop + windowHeight >= documentHeight - 100 && !loading) {
-      if (pathname === '/movies') {
         fetchMovies(page);
-      } else if (pathname === '/recommendations') {
-        fetchRecoms(page);
-      }
+    
     }
   };
 
@@ -89,11 +90,13 @@ const [loading, setLoading] = useState<boolean>(false);
   }, [page, loading]);
 
   return (
-    
+    <>
+   
     <div className='collection'>
 
       {movies?.map((movie: any, index: React.Key | null | undefined) => (
                 <Movie
+                    friends={friends}
                     id={movie.id}
                     poster_path={movie.poster_path}
                     backdrop_path={movie.backdrop_path}
@@ -103,5 +106,6 @@ const [loading, setLoading] = useState<boolean>(false);
                 />
             ))}
     </div>
+    </>
   )
 }

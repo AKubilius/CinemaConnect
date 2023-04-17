@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box/Box'
 import React from 'react'
 import './Filter.css'
+import { Link } from 'react-router-dom'
 export default function FilterOption(option:any) {
   return (
     <div className='filterOption'>
@@ -13,7 +14,7 @@ export default function FilterOption(option:any) {
           opacity: [0.9, 0.8, 0.7],
         },
       }}
-    ><a href={`/movies/${option.id}`}>{option.name}</a></Box>
+    ><Link to={`/movies/${option.id}`} >{option.name}</Link></Box>
 
         
     </div>
