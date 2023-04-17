@@ -5,23 +5,12 @@ import './Container.css'
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Avatar from '@mui/material/Avatar';
-import { deepOrange, green } from '@mui/material/colors';
-import Rating from '@mui/material/Rating';
-import User from '../Users/User';
-import Button from '@mui/material/Button';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import Posts from '../Post/Posts';
-import { RightSideBar } from '../RightSideBar/RightSideBar';
-import Users from '../Users/Users';
-import UserSide from '../Users/UserSide';
 import Collection from '../MoviesCollection/Collection';
 import Movie from '../MoviesCollection/Movie';
-import Collenction from '../MoviesCollection/Collection';
 import Filter from '../Filter/Filter';
-import { useParams } from 'react-router-dom';
 import SearchBar from '../SearchBar/SearchBar';
 import { useState } from 'react';
+import { Link } from '@mui/material';
 
 interface Movie {
   id: number;
@@ -37,7 +26,6 @@ const SimpleContainer: React.FC = () => {
     setMovies(results);
   };
   return (
-
     <>
       <CssBaseline />
       <Container maxWidth="xl" className='container' sx={{ height: 'auto' }}>
@@ -46,14 +34,11 @@ const SimpleContainer: React.FC = () => {
             <Grid item xs={12} >
               <Grid container justifyContent="center" spacing={1} sx={{ height: '100%' }}>
                 <Grid key={1} item>
-
                   <Paper
                     sx={{
                       height: '100%',
                       position: 'relative',
                       width: 350,
-                      backgroundColor: (theme) =>
-                        theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
                     }}>
                     <aside>
                       <Filter />
@@ -64,9 +49,7 @@ const SimpleContainer: React.FC = () => {
                   <Paper
                     sx={{
                       height: 1040,
-                      width: 600,
-                      backgroundColor: (theme) =>
-                        theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+                      width: 600
                     }}>
                     <main>
                       <Collection />
@@ -77,23 +60,18 @@ const SimpleContainer: React.FC = () => {
                   <Paper
                     sx={{
                       height: '100%',
-                      width: 350,
-                      backgroundColor: (theme) =>
-                        theme.palette.mode === 'dark' ? '#1A2027' : '#fff'
+                      width: 350
                     }}>
                     <aside>
                       <SearchBar onResults={handleResults} />
                       <div>
                         {movies.map((movie: any) => (
                           <div key={movie.id}>
-                            <a href={`/movie/${movie.id}`} style={{ textDecoration: 'none', color: 'blue' }}>
+                            <Link href={`/movie/${movie.id}`} sx={{textDecoration: 'none'}}>
                               <Box
                                 sx={{
                                   display: 'flex',
-                                  '&:hover': {
-
-                                    opacity: [0.9, 0.8, 0.7],
-                                  },
+                                  '&:hover': { opacity: [0.9, 0.8, 0.7] }
                                 }}
                               >
                                 <Box
@@ -108,9 +86,9 @@ const SimpleContainer: React.FC = () => {
                                   alt="Movie"
                                   src={`${Url}${movie.poster_path}`}
                                 />
-                                <h3>{movie.title}</h3>
+                                <h4>{movie.title}</h4>
                               </Box>
-                            </a>
+                            </Link>
                           </div>
                         ))}
                       </div>

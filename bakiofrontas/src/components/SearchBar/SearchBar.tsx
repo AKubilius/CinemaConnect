@@ -46,10 +46,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResults }) => {
   return (
     <div>
       <TextField
-        label="Search Movies"
+        label="Ieškoti filmų"
         value={query}
         onChange={handleChange}
         variant="outlined"
+        sx={{width: '100%'}}
       />
     </div>
   );
