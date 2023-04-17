@@ -4,9 +4,10 @@
     align-content: center;
     height: 38px;
     line-height: 1.2;
-   display: flex;
-   text-align: center;
+    display: flex;
+    text-align: center;
 }
+
 .movie{
     justify-content: end;
 }
