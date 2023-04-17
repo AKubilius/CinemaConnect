@@ -1,16 +1,17 @@
 .collection{
-    margin-top: 10px;
+    margin-top: 20px;
     justify-self: start;
 }
+
 .movies{
     display: flex;
     align-items: start;
 }
+
 .movies a{
     align-self: auto;
     margin-top: 5px;
     text-decoration: none;
-    color: black;
     font-weight: bold;
 }
 

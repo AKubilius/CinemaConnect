@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar/Toolbar';
 import Container from '@mui/material/Container';
 import AppBar from '@mui/material/AppBar/AppBar';
-import Logoo from '../../img/Logoo.png'
 import { NavLink } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar/Avatar';
 import { NavBarRequests } from './NavBarRequests';
@@ -88,13 +87,13 @@ export default function BasicTabs() {
                   <Tab sx={{color: 'white'}} disableRipple label="Srautas" {...a11yProps(0)} />
                 </NavLink>
                 <NavLink to="/movies" style={{ textDecoration: 'none' }}>
-                  <Tab sx={{color: 'white'}}disableRipple label="Medija" {...a11yProps(1)} />
+                  <Tab sx={{color: 'white'}} disableRipple label="Medija" {...a11yProps(1)} />
                 </NavLink>
                 <NavLink to="/chat" style={{ textDecoration: 'none' }}>
-                  <Tab sx={{color: 'white'}}disableRipple label="Žinutės" {...a11yProps(2)} />
+                  <Tab sx={{color: 'white'}} disableRipple label="Žinutės" {...a11yProps(2)} />
                 </NavLink>
                 <NavLink to="/recommendations" style={{ textDecoration: 'none' }}>
-                  <Tab sx={{color: 'white'}}disableRipple label="Rekomendacijos" {...a11yProps(2)} />
+                  <Tab sx={{color: 'white'}} disableRipple label="Rekomendacijos" {...a11yProps(2)} />
                 </NavLink>
               </Tabs>
 
