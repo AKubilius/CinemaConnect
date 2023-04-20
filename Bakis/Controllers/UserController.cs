@@ -23,45 +23,68 @@ namespace Bakis.Controllers
             _authorizationService = authorizationService;
         }
 
-        [HttpGet("friends")]
-        [Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<User>>> GetFriends()// Gettinam tik dabartinio žmogaus draugus,pasiimam userį, pasiimam visus friends ir where userid imam listą userių, kurių id yra friends
+        private async Task<User> getCurrentUser()
+        {
+            return  await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
+        }
+
+        private async Task<string> getCurrentUserId()
+        {
+            return  User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        }
+
+        private async Task<List<User>> GetCurrentUsersFriends()
         {
             var Friends = await _databaseContext.Friends.ToListAsync();
-
-            var UserID = await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
-
+            var UserId = await getCurrentUser();
             var Users = await _databaseContext.Users.ToListAsync();
 
-            //_databaseContext.Friends.RemoveRange(Friends);
-            //await _databaseContext.SaveChangesAsync();
-
-            //if (Requests.Count == 0)
-            //    return NotFound("User has no friend requests");
-
-            List<User> users = new List<User>();
-
-            foreach (var friend in Friends) // Friends klasė durnai padaryta, tikrinam ar bent kuris iš variable yra dabartinis useris.
+            List<User> friends = new List<User>();
+            foreach (var friend in Friends)
             {
-                if (friend.UserId == UserID.Id )
-                    users.Add(Users.SingleOrDefault(e => e.Id == friend.FriendId));
+                if (friend.UserId == UserId.Id)
+                    friends.Add(Users.SingleOrDefault(e => e.Id == friend.FriendId));
 
-                if(friend.FriendId == UserID.Id)
-                    users.Add(Users.SingleOrDefault(e => e.Id == friend.UserId));
+                if (friend.FriendId == UserId.Id)
+                    friends.Add(Users.SingleOrDefault(e => e.Id == friend.UserId));
             }
 
-            //if (allList.Count == 0)
-            //    return BadRequest("There are no users available");
-
-
-            return Ok(users);
+            return friends;
         }
+
+
+        [HttpGet("friends")]
+        [Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<User>>> GetFriends()
+        {
+            var friends = await GetCurrentUsersFriends();
+
+            return Ok(friends);
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<User>>> GetUsers()
+        {
+            var currentUser = await getCurrentUser();
+            var allUsers = await _databaseContext.Users.ToListAsync();
+            var friends = await GetCurrentUsersFriends();
+
+            if (allUsers.Count == 0)
+                return BadRequest("There are no users available");
+
+            allUsers.Remove(currentUser);
+            allUsers.RemoveAll(user => friends.Contains(user));
+
+            return Ok(allUsers);
+        }
+
 
         [HttpGet("current")]
         //[Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> GetCurrentUser()
         {
-            var Users = await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
+            var Users = await getCurrentUser();
             if (Users == null)
                 return BadRequest("There are no users available");
             return Ok(Users);
@@ -78,27 +101,13 @@ namespace Bakis.Controllers
         }
 
 
-        [HttpGet]
-        //[Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<User>>> GetUsers()// Getinam friends dar, ir juos irgi istrinam is listo
-        {
-            var Users = await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
-
-            var allList = await _databaseContext.Users.ToListAsync();
-            if (allList.Count == 0)
-                return BadRequest("There are no users available");
-            allList.Remove(Users);
-
-
-            return Ok(allList);
-        }
-
+       
 
         [HttpPut]
        // [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> Update(User request)
         {
-            var Users = await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
+            var Users = await getCurrentUser();
             if (Users == null)
                 return BadRequest("User was not found");
 
@@ -111,7 +120,7 @@ namespace Bakis.Controllers
         [HttpPost("upload-image"), DisableRequestSizeLimit]
         public async Task<ActionResult<List<User>>> UploadImage([FromForm] IFormFile imageFile)
         {
-            var userId =  User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = getCurrentUserId();
 
             var user = await _databaseContext.Users.FindAsync(userId);
             if (user == null)

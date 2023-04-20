@@ -40,7 +40,6 @@ const [roomId,setroomId] = useState<any>([]);
       setSelectedUserIds([...selectedUserIds, userId]);
     }
   };
-
   const navigate = useNavigate();
   const fetchComments = async () => {
 
@@ -60,7 +59,7 @@ const [roomId,setroomId] = useState<any>([]);
 
   const handleUserClick = () => {
     setPressed(!pressed);
-    
+
     const currentPathname = window.location.pathname;
     const lastPathSegment = currentPathname.split('/').pop();
     console.log(lastPathSegment);
@@ -76,7 +75,6 @@ const [roomId,setroomId] = useState<any>([]);
     } else if (lastPathSegment === id) {
       // Remove ID from URL
       const newPathname = currentPathname.replace(`/${id}`, '');
-      console.log('removing ID from URL:', newPathname);
       navigate(newPathname);
     } else if(lastPathSegment !== 'recommendations' && currentPathname.includes(`${id}`) )
     {
@@ -86,16 +84,13 @@ const [roomId,setroomId] = useState<any>([]);
         if(hasEightDashes){
             return;
         }
-      // Add ID to URL
-      console.log('adding ID to URL:', `/recommendations/${id}`);
       navigate(`${id}`);
     }
+    
   };
-  
   return (
      <Box
      onClick={handleUserClick}
-     
      sx={{
         bgcolor: pressed ? 'lightgreen' : 'transparent',
         '&:hover': {
@@ -112,7 +107,6 @@ const [roomId,setroomId] = useState<any>([]);
       </div>                                              
     </div>
     </Box>
-
   )
 }
 

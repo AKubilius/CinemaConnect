@@ -2,7 +2,8 @@ import Avatar from '@mui/material/Avatar/Avatar'
 import Box from '@mui/material/Box/Box'
 import green from '@mui/material/colors/green'
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link as RouterLink , useParams  } from 'react-router-dom';
+import Link from '@mui/material/Link';
 import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 import axios from 'axios'
 
@@ -33,6 +34,12 @@ export const Profile = () => {
   
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
+  const Image_Path = "https://image.tmdb.org/t/p/w500"
+
+  const API = 'https://api.themoviedb.org/3/'
+  const[movies,setMovies] = useState<any[]>([])
+  const[List,setList] = useState<any[]>([])
+
   const getCompatibility = async () => {
     try {
       const { data: { compatibility } } = await axios.get(`https://localhost:7019/list/compatibility/${userName}`,
@@ -44,7 +51,6 @@ export const Profile = () => {
           },
         })
       setProgress(compatibility)
-      console.log(compatibility)
     }
     catch (error) {
       console.error('Bandant gaut Compability gautas error : ', error)
@@ -59,8 +65,6 @@ export const Profile = () => {
       getUserProfile()
     }
   }, [])
-
-
 
   const getLoggedInUser = async () => {
     try {
@@ -80,7 +84,6 @@ export const Profile = () => {
       console.error('Bandant gaut Compability gautas error : ', error)
     }
   }
-
   const getUserProfile = async () => {
     try {
       const { data } = await axios.get(`https://localhost:7019/user/${userName}`,
@@ -99,8 +102,7 @@ export const Profile = () => {
       console.error('Bandant gaut Compability gautas error : ', error)
     }
   }
-
-
+  
 
 
   const getProgressColor = () => {
@@ -149,17 +151,13 @@ export const Profile = () => {
         }}>
           <Box
             sx={style}>
-            <Link to={'/profile/list'} >Shares</Link>
+            <Link  to={'/profile'} component={RouterLink} >Shares</Link>
           </Box>
           <Box sx={style}>
-            <Link to={'/profile/list'} >List</Link>
+            <Link to={'/list/profile' } component={RouterLink}>List</Link>
           </Box>
-
         </Box>
       </Box>
-
-
-
     </div>
   )
 }

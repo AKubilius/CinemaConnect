@@ -20,9 +20,9 @@ import Movie from '../MoviesCollection/Movie';
 
 export default function SimpleContainer() {
     const [value, setValue] = React.useState<boolean>(true);
-    
     return (
-    <>
+
+        <>
       <CssBaseline />
       <Container maxWidth="xl" className="container">
         <Box>
@@ -39,7 +39,9 @@ export default function SimpleContainer() {
                 <Grid key={2} item>
                   <Paper sx={{ height: 'auto', width: 600 }}>
                     <main>
-                      <Posts />
+                      <Posts
+                      param=""
+                      />
                     </main>
                   </Paper>
                 </Grid>

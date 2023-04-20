@@ -15,8 +15,8 @@ interface IPost {
     poster_path: any;
     createdDate: any;
     title: any;
-    backdrop_path:any;
-    friends:any[] | null; 
+    backdrop_path: any;
+    friends: any[] | null;
 }
 
 const Movie: React.FC<IPost> = ({
@@ -45,19 +45,15 @@ const Movie: React.FC<IPost> = ({
                             src={`https://image.tmdb.org/t/p/original${poster_path}`}
                         />
                         <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, width: '100%', marginTop: 1 }}>
-
                             <Link href={`/movie/${id}`}>{title}</Link>
-
                             <Box sx={{ borderRadius: 2, marginBottom: 0, display: 'flex', flexDirection: 'flex', alignItems: 'end', justifyContent: 'left', marginTop: 15 }}>
-
                                 <SendToFriend
-                                friends={friends}
-                                movieId={id}
-                                imgUrl={backdrop_path}
-                                body={title}
+                                    friends={friends}
+                                    movieId={id}
+                                    imgUrl={backdrop_path}
+                                    body={title}
                                 />
                                 <CreatePost
-                                
                                     movieId={id}
                                     imgUrl={backdrop_path}
                                     body={title}

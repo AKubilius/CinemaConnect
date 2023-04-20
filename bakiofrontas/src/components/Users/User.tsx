@@ -5,6 +5,7 @@ import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1';
 import './User.css';
 import Button from '@mui/material/Button';
 import {makePostRequest, makeDeleteRequest} from "../Api/Api";
+import { Link } from '@mui/material';
 
 interface IUser {
   username: any;
@@ -46,8 +47,12 @@ const User: React.FC<IUser> = ({
     <div style={{display: 'flex'}}>
       <Avatar src={`data:image/jpeg;base64,${image64}`} sx={sx} variant="rounded" />
       <div className='user'>
-        <h4>{username}</h4>
-        <h5>{name} {surname}</h5>
+        <h4 style={{      marginBottom:0
+
+}}> <Link href={`/profile/${username}`} style={{textDecoration:'none'} } > {username} </Link></h4>
+        <h5 style={{      marginTop:0
+
+        }}>{name} {surname}</h5>
       </div>
       <div className='addButton'>
 

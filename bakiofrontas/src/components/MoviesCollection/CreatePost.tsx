@@ -39,7 +39,6 @@ export default function BasicModal(movie: any) {
         "https://localhost:7019/Post",
         {
           body: movie.body,
-          userName: "Testuoju",
           movieId: movie.movieId,
           imageUrl: movie.imgUrl,
         },

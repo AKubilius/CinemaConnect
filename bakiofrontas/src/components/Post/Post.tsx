@@ -20,6 +20,7 @@ interface IPost {
   createdDate: any;
   imageUrl: any;
   movieId: any;
+  image64:string;
 }
 
 const Post: React.FC<IPost> = ({
@@ -27,11 +28,13 @@ const Post: React.FC<IPost> = ({
   body,
   createdDate,
   imageUrl,
-  movieId
+  movieId,
+  image64
 }) => {
 
   const [pressed, setPressed] = useState(true);
-  const [pressedLike, setPressedLike] = useState(false);
+  const [pressedLike, setPressedLike] = useState(true);
+  const [inList, setInList] = useState(false);
   const [likes, setLikes] = useState(0);
   const [comments,setComments] = useState<any>([]);
 
@@ -44,8 +47,8 @@ const Post: React.FC<IPost> = ({
   };
 
   const handleClick = (Id: any) => {
-    setPressed(!pressed);
-    pressed ? createRequest(Id) : deleteUser(Id)
+    setInList(!inList);
+    inList ? createRequest(Id) : deleteUser(Id)
   };
 
   const [value, setValue] = useState('');
@@ -94,7 +97,6 @@ const Post: React.FC<IPost> = ({
     fetchComments()
   }, [])
 
-
   const fetchLikes = async () => {
 
     const { data } = await axios.get(`https://localhost:7019/like/${id}`,
@@ -129,6 +131,26 @@ const Post: React.FC<IPost> = ({
     fetchIsLiked()
   }, [])
 
+
+
+  const fetchIsInList = async () => {
+    const { data } = await axios.get(`https://localhost:7019/list/isListed/${id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        },
+      })
+
+      setInList(data)
+  }
+  useEffect(() => {
+    fetchIsInList()
+  }, [])
+
+
+
   async function likePost(Id: any) {
     const { data } = await makePostRequest('https://localhost:7019/Like', { PostId: Id.id });
 
@@ -142,7 +164,7 @@ const Post: React.FC<IPost> = ({
   }
 
   async function createRequest(Id: any) {
-    const { data } = await makePostRequest('https://localhost:7019/List', { MovieID: `${Id.movieId}` });
+    const { data } = await makePostRequest('https://localhost:7019/List/Mylist', { MovieID: `${Id.movieId}` });
     
     return data;
   }
@@ -171,7 +193,7 @@ const Post: React.FC<IPost> = ({
     <div className='post'>
       <Box sx={{ borderRadius: 5, border: '2px solid' }}>
         <Box sx={{ display: 'flex' }}>
-          <Avatar sx={{ bgcolor: blueGrey[900], margin: 2 }} variant="rounded" />
+          <Avatar   src={`data:image/jpeg;base64,${image64}`}  sx={{ bgcolor: blueGrey[900], margin: 2 }} variant="rounded" />
           <h3>{body}</h3>
         </Box>
         
@@ -191,12 +213,12 @@ const Post: React.FC<IPost> = ({
 
             <Button 
               onClick={() => handleClick({ movieId })} 
-              sx={pressed ? neutralButtonSx : deleteButtonSx} 
-              startIcon={pressed ? <AddCircleIcon /> : <DeleteIcon/> } 
+              sx={inList ? deleteButtonSx : neutralButtonSx } 
+              startIcon={inList ? <DeleteIcon/>   :  <AddCircleIcon />} 
               variant="text"
-              color={pressed ? 'primary': 'secondary' } 
+              color={inList ? 'secondary' : 'primary' } 
             >
-              {pressed ? "Pridėti" : "Pašalinti"}
+              {inList ? "Pašalinti" : "Pridėti" }
             </Button>
 
           </Box>

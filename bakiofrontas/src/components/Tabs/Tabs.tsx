@@ -5,13 +5,15 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar/Toolbar';
 import Container from '@mui/material/Container';
 import AppBar from '@mui/material/AppBar/AppBar';
-import { NavLink } from 'react-router-dom';
+import { Link as RouterLink , useParams,NavLink ,useLocation  } from 'react-router-dom';
+import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar/Avatar';
 import { NavBarRequests } from './NavBarRequests';
 import { NavBarNotifications } from './NavBarNotifications';
-import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Loading from './Loading';
+import { logout } from '../Api/Api';
+import Button from '@mui/material/Button/Button';
 
 function a11yProps(index: number) {
   return {
@@ -20,9 +22,15 @@ function a11yProps(index: number) {
   };
 }
 
+const handleLogout = () => {
+  logout();
+};
+
 export default function BasicTabs() {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
+
+  const logged = sessionStorage.getItem("token");
 
   const [value, setValue] = useState(() => {
     switch (location.pathname) {
@@ -77,11 +85,12 @@ export default function BasicTabs() {
       {loading ? <Loading /> :
         <AppBar position="fixed" sx={{ top: -10 }}>
           <Container maxWidth="xl" >
-            <Toolbar sx={{ justifyContent: 'space-between' }} >
+            <Toolbar sx={{ justifyContent: 'space-between', alignContent:'end' }} >
               <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                 <h3>CineConnect</h3>
               </Box>
 
+              <Box sx={{ borderBottom: 1, borderColor: 'divider', alignSelf: 'flex-end' }}>
               <Tabs value={value} onChange={handleChange}>
                 <NavLink to="/home" style={{ textDecoration: 'none' }}>
                   <Tab sx={{color: 'white'}} disableRipple label="Srautas" {...a11yProps(0)} />
@@ -95,13 +104,21 @@ export default function BasicTabs() {
                 <NavLink to="/recommendations" style={{ textDecoration: 'none' }}>
                   <Tab sx={{color: 'white'}} disableRipple label="Rekomendacijos" {...a11yProps(2)} />
                 </NavLink>
-              </Tabs>
-
-              <Box sx={{ display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'center', marginTop: 1 }}>
+              </Tabs></Box>
+{logged ? (<Box sx={{ display: 'flex', flexDirection: 'row', alignContent: 'center', justifyContent: 'center', marginTop: 1 }}>
                 <NavBarRequests />
                 <NavBarNotifications />
+                <Link to="/profile" component={RouterLink}>
                 <Avatar src={`data:image/jpeg;base64,${sessionStorage.getItem("image")}`} ></Avatar>
-              </Box>
+                </Link>
+                <Button onClick={handleLogout}>
+      Logout
+    </Button>
+              </Box>) : (<Box>
+                <Link  to={'/login'} component={RouterLink} >Prisijungti</Link>
+                <Link to={'/register' } component={RouterLink}>Registracija</Link>
+
+              </Box>) }
 
             </Toolbar>
           </Container>
