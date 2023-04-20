@@ -4,8 +4,8 @@ import { deepOrange, green } from '@mui/material/colors';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import PersonAddAlt1RoundedIcon from '@mui/icons-material/PersonAddAlt1Rounded';
 import './User.css';
-import Button from '@mui/material/Button/Button';
-import axios from 'axios';
+import Button from '@mui/material/Button';
+import {makePostRequest, makeDeleteRequest} from "../Api/Api";
 
 interface IUser {
   username: any;
@@ -98,8 +98,12 @@ const User: React.FC<IUser> = ({
     <div style={{display: 'flex'}}>
       <Avatar  src={`data:image/jpeg;base64,${image64}`} sx={{ bgcolor: green[500],margin:2 }} variant="rounded" />
       <div className='user'>
-      <p className='username'>{username}</p>
-      <p className='name'>{name} {surname}</p>
+        <h4 style={{      marginBottom:0
+
+}}> <Link href={`/profile/${username}`} style={{textDecoration:'none'} } > {username} </Link></h4>
+        <h5 style={{      marginTop:0
+
+        }}>{name} {surname}</h5>
       </div>
       <div className='addButton'>
 

@@ -39,7 +39,9 @@ export default function SimpleContainer() {
                 <Grid key={2} item>
                   <Paper sx={{ height: 'auto', width: 600 }}>
                     <main>
-                      <Posts />
+                      <Posts
+                      param=""
+                      />
                     </main>
                   </Paper>
                 </Grid>

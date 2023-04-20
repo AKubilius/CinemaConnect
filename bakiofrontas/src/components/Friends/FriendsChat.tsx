@@ -38,7 +38,6 @@ const FriendsChat = () => {
                 />
             ))}
             </div>
-    
   )
 }
 

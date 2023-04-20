@@ -36,7 +36,6 @@ const [roomId,setroomId] = useState<any>([]);
 
   };
 
-
   const fetchComments = async () => {
 
     const { data } = await axios.get(`https://localhost:7019/api/Message/${id}`,
@@ -50,15 +49,10 @@ const [roomId,setroomId] = useState<any>([]);
       console.log(data)
       setroomId(data)
 
-
   }
   useEffect(() => {
     fetchComments()
   }, [])
-
-
-
-
 
   return (
 

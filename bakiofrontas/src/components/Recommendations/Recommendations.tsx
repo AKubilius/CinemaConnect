@@ -53,7 +53,7 @@ export default function Collection() {
   }, [id1, id2]);
 
 
-  console.log('Request initiated by ExampleComponent');
+
 
   useEffect(() => {
     window.addEventListener('scroll', handleOnScroll);

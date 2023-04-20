@@ -18,9 +18,16 @@ import UserSide from '../Users/UserSide';
 import Collection from '../MoviesCollection/Collection';
 import Movie from '../MoviesCollection/Movie';
 import { Profile } from '../Profile/Profile';
+import { useParams, useLocation } from 'react-router-dom';
+import MyList from '../Mylist/Mylist';
 
 export default function SimpleContainer() {
     const [value, setValue] = React.useState<boolean>(true);
+
+    const { userName } = useParams();
+    const location = useLocation();
+    const showList = location.pathname.includes('/list/profile');
+    console.log(showList)
     return (
 
         <>
@@ -40,7 +47,8 @@ export default function SimpleContainer() {
                 <Grid key={2} item>
                   <Paper sx={{ height: 'auto', width: 600 }}>
                     <main>
-                      
+                    
+                    {showList ? <MyList /> : <Posts param="/profile" />}
                     </main>
                   </Paper>
                 </Grid>

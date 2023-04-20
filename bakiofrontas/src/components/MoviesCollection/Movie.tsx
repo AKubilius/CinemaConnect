@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './Collection.css'
-import { Box, Button } from '@mui/material'
+import { Box, Button, Link } from '@mui/material'
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from 'axios';
 import CreatePost from './CreatePost';
@@ -10,17 +10,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import SendToFriend from './SendToFriend';
 
-
 interface IPost {
     id: any;
     poster_path: any;
     createdDate: any;
     title: any;
-    backdrop_path:any;
-    friends:any[] | null; 
-
+    backdrop_path: any;
+    friends: any[] | null;
 }
-
 
 const Movie: React.FC<IPost> = ({
     id,
@@ -31,15 +28,10 @@ const Movie: React.FC<IPost> = ({
     friends
 
 }) => {
-
-   
-
     return (
-
         <div className='collection'>
-
-            <Box >
-                <Box sx={{ bgcolor: '#cfe8fc', display: 'flex', borderRadius: 2, width: '100%', boxShadow: '0 4px 6px grey' }}>
+            <Box>
+                <Box sx={{ display: 'flex', borderRadius: 2, width: '100%', border: 1 }}>
                     <div className='movies'>
                         <Box
                             component="img"
@@ -53,19 +45,15 @@ const Movie: React.FC<IPost> = ({
                             src={`https://image.tmdb.org/t/p/original${poster_path}`}
                         />
                         <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, width: '100%', marginTop: 1 }}>
-
-                            <a href={`/movie/${id}`}>{title}</a>
-
+                            <Link href={`/movie/${id}`}>{title}</Link>
                             <Box sx={{ borderRadius: 2, marginBottom: 0, display: 'flex', flexDirection: 'flex', alignItems: 'end', justifyContent: 'left', marginTop: 15 }}>
-
                                 <SendToFriend
-                                friends={friends}
-                                movieId={id}
-                                imgUrl={backdrop_path}
-                                body={title}
+                                    friends={friends}
+                                    movieId={id}
+                                    imgUrl={backdrop_path}
+                                    body={title}
                                 />
                                 <CreatePost
-                                
                                     movieId={id}
                                     imgUrl={backdrop_path}
                                     body={title}
@@ -74,9 +62,7 @@ const Movie: React.FC<IPost> = ({
                         </Box>
                     </div>
                 </Box>
-
             </Box>
-          
         </div>
     )
 }

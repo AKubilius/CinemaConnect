@@ -17,6 +17,7 @@ const authConfig = {
 
 async function makePostRequest(url: string, postData: any) {
   const authorizationToken = `Bearer ${sessionStorage.getItem("token")}`;
+
   try {
     const { data /*status*/ } = await axios.post<any>(url, postData, {
       headers: {
@@ -61,5 +62,10 @@ async function handleError(error: any) {
     return "An unexpected error occurred";
   }
 }
+
+export const logout = () => {
+  sessionStorage.clear();
+};
+
 
 export { api, authConfig, makePostRequest, makeDeleteRequest};

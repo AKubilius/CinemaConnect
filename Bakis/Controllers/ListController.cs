@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
@@ -29,48 +30,90 @@ namespace Bakis.Controllers
             API_KEY = configuration["TMDB:ApiKey"];
         }
 
-        [HttpGet]
-        [Authorize(Roles = Roles.User)]
+        [HttpGet("Mylist")]
+        //[Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<MyList>>> Get()
         {
             var allList = await _databaseContext.Lists.ToListAsync();
             if (allList.Count == 0)
                 return BadRequest("User has nothing in list");
-            var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
-            if (List.Count == 0)
-                return BadRequest("User has nothing in list");
+            var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();//cia ne tiap
+
+            return Ok(List);
+        }
+
+
+        [HttpGet("Mylist/{userName}")]
+        public async Task<ActionResult<List<MyList>>> GetUserList(string userName)
+        {
+            var user = await _databaseContext.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+
+            var allList = await _databaseContext.Lists.ToListAsync();
+            if (allList.Count == 0)
+                return NotFound("There are nothing in Lists database");
+
+            var List = allList.Where(s => s.UserId == user.Id).ToList();//cia ne tiap
+
             return Ok(List);
         }
 
         //STRINGAS ID MOVIE???? perdaryk
-        [HttpPost]
+        [HttpPost("Mylist")]
         [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<MyList>>> Create(MyList List) 
         {
             List.UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
+            var movieList = await _databaseContext.Lists
+               .Where(list => list.MovieID == List.MovieID && list.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub))
+               .ToListAsync();
+
+            var UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+
+            if (movieList.Count != 0)
+            {
+                return Ok("Movie already in list");
+            }
             _databaseContext.Lists.Add(List);
             await _databaseContext.SaveChangesAsync();
             return Ok(await _databaseContext.Lists.ToListAsync());
         }
-        
+
+        [HttpGet("isListed/{id}")]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        public async Task<ActionResult<List<MyList>>> GetIsLiked(int id)
+        {
+            var List = await _databaseContext.Posts.FindAsync(id);
+            if (List == null)
+                return NotFound();
+
+            var UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            var inList = _databaseContext.Lists.SingleOrDefault(e => e.UserId == UserId && e.MovieID == List.MovieId.ToString());
+
+            if (inList == null)
+                return Ok(false);
+
+            return Ok(true);
+        }
+
+
+        //var Likes = await _databaseContext.Likes.ToListAsync();
+        //_databaseContext.Likes.RemoveRange(Likes);
+        //await _databaseContext.SaveChangesAsync();
+
+
         [HttpDelete("{id}")]
        // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
-        public async Task<ActionResult<List<MyList>>> Delete(int id)
+        public async Task<ActionResult<List<MyList>>> Delete(string id)
         {
-            var List = await _databaseContext.Lists.FindAsync(id);
-            if (List == null)
-                return BadRequest("List not found");
 
-            var authResult = await _authorizationService.AuthorizeAsync(User, List, PolicyNames.ResourceOwner);
-            if (!authResult.Succeeded)
-            {
-                return BadRequest("No permissions");
-            }
+            var movieList = _databaseContext.Lists.SingleOrDefault(e => e.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub) && e.MovieID == id);
 
-            _databaseContext.Lists.Remove(List);
+            _databaseContext.Lists.Remove(movieList);
             await _databaseContext.SaveChangesAsync();
-            return Ok(List);
+            return Ok(movieList);
         }
 
 

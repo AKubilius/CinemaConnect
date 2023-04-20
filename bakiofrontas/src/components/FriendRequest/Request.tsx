@@ -27,10 +27,8 @@ const Request: React.FC<Request> = ({
     deleteUser(Id)
   };
 
-
   async function acceptRequest(Id: any) {
     try {
-
       const { data, status } = await axios.post<any>(`https://localhost:7019/FriendRequest/accept/${Id.id}`,
         {
           headers: {
@@ -40,9 +38,6 @@ const Request: React.FC<Request> = ({
           },
         },
       );
-
-      //setCreatedId(JSON.stringify(data, null, 4));
-
       return data;
 
     } catch (error) {
@@ -59,8 +54,6 @@ const Request: React.FC<Request> = ({
 
   async function deleteUser(Id: any) {
     try {
-
-      // 👇️ const data: UpdateUserResponse
       const { data, status } = await axios.delete<any>(`https://localhost:7019/FriendRequest/delete/${Id.id}`,
         {
           headers: {
@@ -69,13 +62,9 @@ const Request: React.FC<Request> = ({
           },
         },
       );
-      console.log('response is: ', data);
-
-      // 👇️ response status is: 204
-      console.log('response status is: ', status);
-
       return data;
-    } catch (error) {
+    } 
+    catch (error) {
       if (axios.isAxiosError(error)) {
         console.log('error message: ', error.message);
         // 👇️ error: AxiosError<any, any>
@@ -86,18 +75,15 @@ const Request: React.FC<Request> = ({
       }
     }
   }
-
+console.log(id)
   return (
     <div>
       <Box sx={{ bgcolor: 'lightgrey', display: 'flex', borderRadius: 1, boxShadow: '0 4px 6px grey', width: '25vh', justifyContent: 'space-between', alignContent: 'center' }}>
 
+
         <Box sx={{ margin: 1, alignContent: 'center', display: 'flex' }}>
           <Typography>{username}</Typography>
-
-
         </Box>
-
-
         <Box sx={{ margin: 1 }}>
           <IconButton onClick={() => handleClickAccept({ id })}  >
             <CheckIcon sx={{
@@ -106,15 +92,12 @@ const Request: React.FC<Request> = ({
           </IconButton>
           <IconButton onClick={() => handleClickDecline({ id })}
             sx={{
-
             }} >
             <DoDisturbIcon sx={{
-
               color: 'red'
             }} />
           </IconButton>
         </Box>
-
       </Box>
 
     </div>
