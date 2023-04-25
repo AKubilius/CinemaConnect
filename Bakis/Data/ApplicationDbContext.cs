@@ -17,7 +17,7 @@ namespace Bakis.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<UserRoom> UserRooms { get; set; }
         public DbSet<UserCompatibility> UserCompatibilities { get; set; }
-
+       
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

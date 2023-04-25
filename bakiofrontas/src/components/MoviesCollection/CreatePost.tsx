@@ -7,6 +7,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import TextField from "@mui/material/TextField";
 import Rating from "@mui/material/Rating/Rating";
 import axios from "axios";
+import { useState } from "react";
 
 const style = {
   position: "absolute" as "absolute",
@@ -26,19 +27,26 @@ export default function BasicModal(movie: any) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [value, setValue] = React.useState<number | null>(0);
+  const [comment, setComment] = useState('');
+
   const HandleSubmit = () => {
     setOpen(false);
     CreatePost();
   };
 
   const token = `Bearer ${sessionStorage.getItem("token")}`;
-  function HandleClick(params: any) {}
+  
+  const handleCommentChange = (event: { target: { value: any; }; }) => {
+    setComment(event.target.value);
+  };
+
+
   async function CreatePost() {
     try {
       const { data, status } = await axios.post<any>(
         "https://localhost:7019/Post",
         {
-          body: movie.body,
+          body: comment,
           movieId: movie.movieId,
           imageUrl: movie.imgUrl,
         },
@@ -92,6 +100,7 @@ export default function BasicModal(movie: any) {
               label="Kometaras"
               multiline
               rows={4}
+              onChange={handleCommentChange}
               sx={{
                 marginTop: 2,
               }}

@@ -1,5 +1,6 @@
 import React from 'react'
 import Box from '@mui/material/Box';
+import { useNavigate } from 'react-router-dom';
 import './Movie.css'
 
 interface IPost {
@@ -17,18 +18,28 @@ const RightMovie: React.FC<IPost> = ({
     posterPath
   }) => {
 
+    const navigate = useNavigate();
 const Url = "https://image.tmdb.org/t/p/original"
+
+
+const handleClick = () => {
+  
+  navigate(`/movie/${id}`);
+};
 
 return (
     <div className='movie'>
       <Box
+      
         component="img"
         sx={{
           margin: 1,
           borderRadius: 2,
           height: 1,
           width: '85%',
+          cursor:'pointer'
         }}
+        onClick={handleClick}
         alt="Movie"
         src={`${Url}${posterPath}`}
       />

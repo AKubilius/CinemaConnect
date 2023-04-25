@@ -151,10 +151,10 @@ export const Profile = () => {
         }}>
           <Box
             sx={style}>
-            <Link  to={'/profile'} component={RouterLink} >Shares</Link>
+            <Link  to={`/profile ${userName? `/${userName}` : ``}` } component={RouterLink} >Shares</Link>
           </Box>
           <Box sx={style}>
-            <Link to={'/list/profile' } component={RouterLink}>List</Link>
+            <Link to={`/list/profile ${userName? `/${userName}` : ``}`} component={RouterLink}>List</Link>
           </Box>
         </Box>
       </Box>

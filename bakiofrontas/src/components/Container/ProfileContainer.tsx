@@ -20,11 +20,13 @@ import Movie from '../MoviesCollection/Movie';
 import { Profile } from '../Profile/Profile';
 import { useParams, useLocation } from 'react-router-dom';
 import MyList from '../Mylist/Mylist';
+import { useEffect } from 'react';
 
 export default function SimpleContainer() {
     const [value, setValue] = React.useState<boolean>(true);
 
     const { userName } = useParams();
+ 
     const location = useLocation();
     const showList = location.pathname.includes('/list/profile');
     console.log(showList)

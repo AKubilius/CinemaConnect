@@ -63,7 +63,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> GetUsers()
         {
             var currentUser = await getCurrentUser();
@@ -75,6 +75,18 @@ namespace Bakis.Controllers
 
             allUsers.Remove(currentUser);
             allUsers.RemoveAll(user => friends.Contains(user));
+
+            return Ok(allUsers);
+        }
+
+        [HttpGet("allUsers")]
+        //[Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<User>>> GetAllUsers()
+        {
+            var allUsers = await _databaseContext.Users.ToListAsync();
+
+            if (allUsers.Count == 0)
+                return BadRequest("There are no users available");
 
             return Ok(allUsers);
         }

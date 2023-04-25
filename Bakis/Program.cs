@@ -2,6 +2,7 @@ using Bakis.Auth.Model;
 using Bakis.Auth;
 using Bakis.Data;
 using Bakis.Data.Models;
+using Bakis.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,8 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Bakis.Hubs;
+
+using Bakis.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -46,7 +48,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
-
+builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddSignalR();
 
 builder.Services.AddHttpClient();

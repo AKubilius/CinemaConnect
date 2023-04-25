@@ -47,8 +47,9 @@ const Post: React.FC<IPost> = ({
   };
 
   const handleClick = (Id: any) => {
+   
+    inList ?  deleteUser(Id) :createRequest(Id)
     setInList(!inList);
-    inList ? createRequest(Id) : deleteUser(Id)
   };
 
   const [value, setValue] = useState('');
@@ -165,7 +166,7 @@ const Post: React.FC<IPost> = ({
 
   async function createRequest(Id: any) {
     const { data } = await makePostRequest('https://localhost:7019/List/Mylist', { MovieID: `${Id.movieId}` });
-    
+    console.log(data)
     return data;
   }
 
