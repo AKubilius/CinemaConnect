@@ -2,7 +2,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes, Navigate} from 'react-router-dom'
-import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import MyListTable from './components/Mylist/Mylist';
 import Movie from './components/Movie/Movie';
@@ -12,6 +11,8 @@ import BasicTabs from './components/Tabs/Tabs';
 import TempContainer from './components/Container/TempContainer';
 import ChatContainer from './components/Container/ChatContainer';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import LoginSide from './components/Login/LoginSide';
+import RegisterSide from './components/Register/RegisterSide';
 
 const theme = createTheme({
   palette: {
@@ -104,7 +105,6 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-
   <BrowserRouter>
   <ThemeProvider theme={theme}>
     <BasicTabs/>
@@ -114,8 +114,8 @@ root.render(
       <Route path="/movies/:id" element={<TempContainer />} />
       <Route path="/movies" element={<TempContainer />} />
       <Route path="/" element={<Navigate replace to="/home" />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<LoginSide />} />
+      <Route path="/register" element={<RegisterSide />} />
       <Route path="/movie/:id" element={<Movie/>} />
       <Route path="/list" element={<MyListTable/>} />
       <Route path="/chat/:id?" element={<ChatContainer/>} />

@@ -1,9 +1,7 @@
 import {
     Box,
     Container,
-    createTheme,
     CssBaseline,
-    ThemeProvider,
   } from "@mui/material";
   
   interface FormContainerProps {
@@ -11,10 +9,8 @@ import {
   }
   
   const Form: React.FC<FormContainerProps> = ({ children }) => {
-    const theme = createTheme();
   
     return (
-      <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
@@ -28,7 +24,6 @@ import {
             {children}
           </Box>
         </Container>
-      </ThemeProvider>
     );
   };
   
