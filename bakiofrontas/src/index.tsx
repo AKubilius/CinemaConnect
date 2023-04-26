@@ -22,6 +22,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ResetPassword from './components/ResetPassword/ResetPassword'; // Import the ResetPassword component
 import LoginSide from './components/Login/LoginSide';
 import RegisterSide from './components/Register/RegisterSide';
+import NotFound from './components/NotFound/NotFound';
+import ProtectedRoutes from './components/ProtectedRoute/ProtectedRoute';
+import ProtectedWrapper from './components/ProtectedRoute/ProtectedWrapper';
 
 
 const theme = createTheme({
@@ -112,30 +115,50 @@ const theme = createTheme({
   }
 });
 
+
+  const shouldRenderNavbar = () => {
+    
+    const currentPath = window.location.pathname;
+    console.log(currentPath)
+    return currentPath !== '/login' && currentPath !== '/register' && currentPath !== '/not-found';
+  };
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
 
   <BrowserRouter>
    <ThemeProvider theme={theme}>
-    <BasicTabs />
+    {shouldRenderNavbar() ? <BasicTabs /> : "" }
     <Routes>
-      <Route path="/" element={<Navigate replace to="/home" />} />
-      <Route path="/login" element={<LoginSide />} />
-      <Route path="/register" element={<RegisterSide />} />
-      <Route path="/home" element={<Container />} />
-      <Route path="/movies/:id" element={<TempContainer />} />
-      <Route path="/movies" element={<TempContainer />} />
-      <Route path="/movie/:id" element={<Movie />} />
-      <Route path="/recommendations/:id1?/:id2?" element={<RecomContainer />} />
-      <Route path="/chat/:id?" element={<ChatContainer />} />
-      <Route path="/profile/:userName?" element={<ProfileContainer />} />
-      <Route path="/profile" element={<ProfileContainer />} />
-      <Route path="/list/profile/:userName?"element={<ProfileContainer />} />
-      <Route path="/list/profile"element={<ProfileContainer />} />
-      <Route path="/reset-password" element={<ResetPassword/>} />
-    </Routes>
+  <Route path="/" element={<Navigate replace to="/home" />} />
+  <Route path="/login" element={<LoginSide />} />
+  <Route path="/register" element={<RegisterSide />} />
+  <Route path="/reset-password" element={<ResetPassword />} />
+  <Route path="/not-found" element={<NotFound />} />
+  
+  <Route
+    path="/*"
+    element={
+      <ProtectedRoutes>
+        <ProtectedWrapper />
+      </ProtectedRoutes>
+    }
+  >
+    <Route path="home" element={<Container />} />
+    <Route path="movies/:id" element={<TempContainer />} />
+    <Route path="movies" element={<TempContainer />} />
+    <Route path="recommendations/:id1?/:id2?" element={<RecomContainer />} />
+    <Route path="chat/:id?" element={<ChatContainer />} />
+    <Route path="profile/:userName?" element={<ProfileContainer />} />
+    <Route path="profile" element={<ProfileContainer />} />
+    <Route path="list/profile/:userName?" element={<ProfileContainer />} />
+    <Route path="list/profile" element={<ProfileContainer />} />
+    <Route path="*" element={<Navigate to="/not-found" />} />
+  </Route>
+</Routes>
     </ThemeProvider>
   </BrowserRouter>
 );

@@ -118,12 +118,12 @@ export default function LoginSide() {
               </Button>
               <Grid container >
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="/reset-password" variant="body2">
                     Pamiršote Slaptažodį?
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/register" variant="body2">
                     {"Neturite paskyros? Užsiregistruokite"}
                   </Link>
                 </Grid>

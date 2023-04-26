@@ -165,9 +165,6 @@ export default function NavBar() {
             </Button>
 
           </Box>
-          {name ? (
-
-
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -201,18 +198,8 @@ export default function NavBar() {
                     window.location.href = "/";
                   }} >Logout</Button>
                 </MenuItem>
-
               </Menu>
             </Box>
-          ) : (<>
-            <Button color="inherit" href="/login">
-              Prisijungti
-            </Button>
-            <Button color="inherit" href="/register">
-              Registruotis
-            </Button>
-          </>
-          )}
         </Toolbar>
       </Container>
       

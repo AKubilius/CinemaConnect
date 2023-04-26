@@ -90,7 +90,12 @@ const Posts: React.FC<PostsProps>  = ({ param }) => {
   useEffect(() => {
     fetchPosts();
     axios
-      .get('https://localhost:7019/Post/total')
+      .get('https://localhost:7019/Post/total',
+      { headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: token
+      }})
       .then((response: { data: number }) => {
         setTotalPosts(response.data);
       })
