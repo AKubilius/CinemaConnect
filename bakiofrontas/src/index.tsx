@@ -1,18 +1,28 @@
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Route, Routes, Navigate} from 'react-router-dom'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import NavBar from './components/NavBar/NavBar';
+import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import MyListTable from './components/Mylist/Mylist';
 import Movie from './components/Movie/Movie';
+import { RightSideBar } from './components/RightSideBar/RightSideBar';
 import Users from './components/Users/Users';
 import Container from './components/Container/Container';
 import BasicTabs from './components/Tabs/Tabs';
 import TempContainer from './components/Container/TempContainer';
+import Chat from './components/Chat/Chat';
 import ChatContainer from './components/Container/ChatContainer';
+import RecomContainer from './components/Container/RecomContainer';
+import ProfileContainer from './components/Container/ProfileContainer';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import ResetPassword from './components/ResetPassword/ResetPassword'; // Import the ResetPassword component
 import LoginSide from './components/Login/LoginSide';
 import RegisterSide from './components/Register/RegisterSide';
+
 
 const theme = createTheme({
   palette: {
@@ -65,6 +75,8 @@ const theme = createTheme({
       fontSize: '1rem',
       fontWeight: 700,
       lineHeight: 1.2,
+
+
     },
     h6: {
       fontSize: '0.875rem',
@@ -103,27 +115,33 @@ const theme = createTheme({
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-
 root.render(
+
   <BrowserRouter>
-  <ThemeProvider theme={theme}>
-    <BasicTabs/>
+   <ThemeProvider theme={theme}>
+    <BasicTabs />
     <Routes>
-      <Route path="/users" element={<Users />} />
-      <Route path="/home" element={<Container />} />
-      <Route path="/movies/:id" element={<TempContainer />} />
-      <Route path="/movies" element={<TempContainer />} />
       <Route path="/" element={<Navigate replace to="/home" />} />
       <Route path="/login" element={<LoginSide />} />
       <Route path="/register" element={<RegisterSide />} />
-      <Route path="/movie/:id" element={<Movie/>} />
-      <Route path="/list" element={<MyListTable/>} />
-      <Route path="/chat/:id?" element={<ChatContainer/>} />
+      <Route path="/home" element={<Container />} />
+      <Route path="/movies/:id" element={<TempContainer />} />
+      <Route path="/movies" element={<TempContainer />} />
+      <Route path="/movie/:id" element={<Movie />} />
+      <Route path="/recommendations/:id1?/:id2?" element={<RecomContainer />} />
+      <Route path="/chat/:id?" element={<ChatContainer />} />
+      <Route path="/profile/:userName?" element={<ProfileContainer />} />
+      <Route path="/profile" element={<ProfileContainer />} />
+      <Route path="/list/profile/:userName?"element={<ProfileContainer />} />
+      <Route path="/list/profile"element={<ProfileContainer />} />
+      <Route path="/reset-password" element={<ResetPassword/>} />
     </Routes>
     </ThemeProvider>
   </BrowserRouter>
 );
 
+//<Route path="/login" element={<Login />} />
+     // <Route path="/register" element={<Register />} />
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

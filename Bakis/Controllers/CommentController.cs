@@ -48,7 +48,7 @@ namespace Bakis.Controllers
         }
 
         [HttpDelete("{id}")]
-        // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<Comment>>> Delete(int id)
         {
             var List = await _databaseContext.Comments.FindAsync(id);

@@ -8,6 +8,8 @@ using Bakis.Data.Migrations;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Bakis.Data.Models.DTOs;
+using Bakis.Auth.Model;
+using UserDto = Bakis.Data.Models.DTOs.UserDto;
 
 namespace Bakis.Controllers
 {
@@ -25,7 +27,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet]
-        // [Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<Message>>> Get()
         {
             var allList = await _databaseContext.Messages
@@ -51,7 +53,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet("{id}")]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult> GetRoomId(string id)
         {
             // Fetch rooms for both users

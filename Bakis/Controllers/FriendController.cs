@@ -54,7 +54,7 @@ namespace Bakis.Controllers
         }
 
         [HttpDelete("{id}")]
-        // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<Friend>>> Delete(int id)
         {
             var List = await _databaseContext.Friends.FindAsync(id);

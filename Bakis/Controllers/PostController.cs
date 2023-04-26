@@ -35,7 +35,7 @@ namespace Bakis.Controllers
 
 
         [HttpGet]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<Post>>> Get(int page = 1, int pageSize = 2)
         {
             var allList = await _databaseContext.Posts.Include(m => m.User).ToListAsync();
@@ -68,7 +68,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet("profile/{userName?}")]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<Post>>> GetUserPost(string? userName,int page = 1, int pageSize = 2)
         {
             List<Post> allList = new List<Post>();
@@ -116,7 +116,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet("total")]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<Post>>> GetPostsCount()
         {
             var allList = await _databaseContext.Posts.ToListAsync();
@@ -136,7 +136,7 @@ namespace Bakis.Controllers
         }
 
         [HttpDelete("{id}")]
-        // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<Post>>> Delete(int id)
         {
             var List = await _databaseContext.Posts.FindAsync(id);

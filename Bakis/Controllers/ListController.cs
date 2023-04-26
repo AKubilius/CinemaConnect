@@ -31,7 +31,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet("Mylist")]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<MyList>>> Get()
         {
             var allList = await _databaseContext.Lists.ToListAsync();
@@ -105,7 +105,7 @@ namespace Bakis.Controllers
 
 
         [HttpDelete("{id}")]
-       // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<MyList>>> Delete(string id)
         {
 

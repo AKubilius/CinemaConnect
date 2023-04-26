@@ -80,7 +80,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet("allUsers")]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> GetAllUsers()
         {
             var allUsers = await _databaseContext.Users.ToListAsync();
@@ -93,7 +93,7 @@ namespace Bakis.Controllers
 
 
         [HttpGet("current")]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> GetCurrentUser()
         {
             var Users = await getCurrentUser();
@@ -103,7 +103,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet("{userName}")]
-        //[Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> GetCurrentUser(string userName)
         {
             var user = await _databaseContext.Users.SingleOrDefaultAsync(u => u.UserName == userName);
@@ -116,7 +116,7 @@ namespace Bakis.Controllers
        
 
         [HttpPut]
-       // [Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> Update(User request)
         {
             var Users = await getCurrentUser();

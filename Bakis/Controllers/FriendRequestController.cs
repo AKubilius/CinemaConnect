@@ -92,7 +92,7 @@ namespace Bakis.Controllers
         }
 
         [HttpDelete("{id}")]
-        // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<FriendRequest>>> CancelRequest(string id)
         {
             string myId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -114,7 +114,7 @@ namespace Bakis.Controllers
         }
 
         [HttpPost("accept/{id}")]
-        // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<FriendRequest>>> AcceptRequest(int id)
         {
             var List = await _databaseContext.FriendRequests.FindAsync(id);
@@ -145,8 +145,6 @@ namespace Bakis.Controllers
                 UserId = List.InvitedBy,
                 RoomId = newRoom.Id
             };
-
-
             //Prie friends turėčiau įdėt, gal prie FriendsRequest ten kažkur
             //    _context.Rooms.Add(newRoom);
             //await _context.SaveChangesAsync();
@@ -161,7 +159,7 @@ namespace Bakis.Controllers
 
 
         [HttpDelete("delete/{id}")]
-        // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<FriendRequest>>> DeleteRequest(int id)
         {
             var List = await _databaseContext.FriendRequests.FindAsync(id);
