@@ -63,7 +63,7 @@ namespace Bakis.Controllers
                 .Where(list => list.UserId == userId)
                 .ToListAsync();
 
-            return movieList.Select(list => int.Parse(list.MovieID)).ToList();
+            return movieList.Select(list => list.MovieID).ToList();
         }
 
         [HttpGet("recommendations")]

@@ -78,6 +78,7 @@ const theme = createTheme({
       fontSize: '1rem',
       fontWeight: 700,
       lineHeight: 1.2,
+      marginBottom:0
 
 
     },
@@ -119,7 +120,6 @@ const theme = createTheme({
   const shouldRenderNavbar = () => {
     
     const currentPath = window.location.pathname;
-    console.log(currentPath)
     return currentPath !== '/login' && currentPath !== '/register' && currentPath !== '/not-found';
   };
 
@@ -131,7 +131,7 @@ root.render(
 
   <BrowserRouter>
    <ThemeProvider theme={theme}>
-    {shouldRenderNavbar() ? <BasicTabs /> : "" }
+    {shouldRenderNavbar() && <BasicTabs />}
     <Routes>
   <Route path="/" element={<Navigate replace to="/home" />} />
   <Route path="/login" element={<LoginSide />} />
@@ -147,9 +147,10 @@ root.render(
       </ProtectedRoutes>
     }
   >
-    <Route path="home" element={<Container />} />
+   <Route path="home" element={<Container />} />
     <Route path="movies/:id" element={<TempContainer />} />
     <Route path="movies" element={<TempContainer />} />
+    <Route path="movie/:id" element={<Movie />} />
     <Route path="recommendations/:id1?/:id2?" element={<RecomContainer />} />
     <Route path="chat/:id?" element={<ChatContainer />} />
     <Route path="profile/:userName?" element={<ProfileContainer />} />

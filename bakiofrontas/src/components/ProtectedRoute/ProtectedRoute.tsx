@@ -1,22 +1,20 @@
-import { Navigate, Route } from 'react-router-dom';
-import { Outlet } from 'react-router-dom';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProtectedRoutesProps {
   children: React.ReactNode;
 }
 const ProtectedRoutes: React.FC<ProtectedRoutesProps> = ({ children }) => {
+  const navigate = useNavigate();
+  const isAuthenticated = sessionStorage.getItem('token') ? true : false;
+  console.log('isAuthenticated:', isAuthenticated); // Add this line
+  useEffect(() => {
+    if (!isAuthenticated) {
+      window.location.href = '/login';
+    }
+  }, [isAuthenticated, navigate]);
 
-
-  const isAuthenticated = localStorage.getItem('token') ? true : false;
-
-  if (!isAuthenticated) {
-    window.location.href = '/login';
-    return null;
-  }
-  return <>{children}</>;
+  return <>{isAuthenticated && children}</>;
 };
 
 export default ProtectedRoutes;
-
-

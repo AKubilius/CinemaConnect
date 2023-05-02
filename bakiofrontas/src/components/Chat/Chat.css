@@ -12,19 +12,19 @@
   
   .message-content {
     display: inline-block;
-    max-width: 70%; /* Adjust this value according to your desired maximum width */
+    max-width: 70%;
     word-wrap: break-word;
-    white-space: pre-wrap; /* Ensures line breaks and spaces are preserved */
-    padding: 8px;
-    background-color: #f1f1f1;
+    white-space: pre-wrap;
+    padding: 8px; 
     border-radius: 4px;
   }
+  
   .my-message .message-content {
     align-self: flex-end;
-    background-color: #d1e7ff;
+    background-color:red ;/*#d1e7ff*/ 
   }
   
   .other-message .message-content {
     align-self: flex-start;
-    background-color: #f1f1f1;
+    background-color: green;/* #f1f1f1*/ 
   }

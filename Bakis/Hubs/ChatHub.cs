@@ -49,14 +49,19 @@ namespace Bakis.Hubs
 
                 await JoinUserRooms(userId.Id);
             }
-
-
             await base.OnConnectedAsync();
         }
 
         public async Task JoinRoom(string roomId)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            try
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error joining room: {ex.Message}");
+            }
         }
 
         public async Task LeaveRoom(string roomId)
@@ -66,8 +71,24 @@ namespace Bakis.Hubs
 
         public async Task SendMessageToRoom(string roomId, string user, string message)
         {
-            Debug.WriteLine($"SendMessageToRoom called with roomId: {roomId}, user: {user}, message: {message}"); // Add this line
+            var userId = await _userManager.FindByNameAsync(user);
 
+            var newMessage = new Message
+            {
+                SenderId = userId.Id,
+                Sender = userId,
+                Body = message,
+                DateTime = DateTime.UtcNow,
+                RoomId = Int32.Parse(roomId),
+            };
+            _context.Messages.Add(newMessage);
+
+            await _context.SaveChangesAsync();
+            await Clients.Group(roomId).SendAsync("ReceiveMessage", user, message);
+        }
+
+        public async Task SendRequestToRoom(string roomId, string user, string message, Boolean isMovie, string? friendId, DateTime watchDate)
+        {
 
             var userId = await _userManager.FindByNameAsync(user);
 
@@ -77,11 +98,23 @@ namespace Bakis.Hubs
                 Sender = userId,
                 Body = message,
                 DateTime = DateTime.UtcNow,
-                RoomId = Int32.Parse(roomId)
-
+                RoomId = Int32.Parse(roomId),
+                IsMovie = isMovie
             };
-
             _context.Messages.Add(newMessage);
+            if (isMovie)
+            {
+                var watchingRequest = new WatchingRequest
+                {
+                    Status = Status.Delivered,
+                    InvitedBy = userId,
+                    FriendId = friendId,
+                    CreatedAt = DateTime.UtcNow,
+                    WatchingDate = watchDate // You may want to set a different date/time for the watching date
+                };
+
+                _context.WatchingRequests.Add(watchingRequest);
+            }
             await _context.SaveChangesAsync();
 
             Debug.WriteLine($"Broadcasting message to group: {roomId}"); // Add this line
@@ -104,6 +137,7 @@ namespace Bakis.Hubs
                 Id = m.Id,
                 Body = m.Body,
                 DateTime = m.DateTime,
+                IsMovie = m.IsMovie,
                 Sender = new UserDto
                 {
                     Id = m.Sender.Id,
@@ -112,8 +146,6 @@ namespace Bakis.Hubs
                 }
             })
             .ToListAsync();
-
-
 
             return allList;
         }

@@ -47,17 +47,23 @@ const Movie: React.FC<IPost> = ({
                         <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, width: '100%', marginTop: 1 }}>
                             <Link href={`/movie/${id}`}>{title}</Link>
                             <Box sx={{ borderRadius: 2, marginBottom: 0, display: 'flex', flexDirection: 'flex', alignItems: 'end', justifyContent: 'left', marginTop: 15 }}>
-                                <SendToFriend
-                                    friends={friends}
-                                    movieId={id}
-                                    imgUrl={backdrop_path}
-                                    body={title}
-                                />
-                                <CreatePost
-                                    movieId={id}
-                                    imgUrl={backdrop_path}
-                                    body={title}
-                                />
+                               
+                               {
+                            friends ? <div style={{display:'flex'}}>
+                            <SendToFriend
+                                friends={friends}
+                                movieId={id}
+                                imgUrl={backdrop_path}
+                                body={title}
+                            />
+                            <CreatePost
+                                movieId={id}
+                                imgUrl={backdrop_path}
+                                body={title}
+                            />
+                            </div> : ''
+                               }
+                               
                             </Box>
                         </Box>
                     </div>

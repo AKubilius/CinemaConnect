@@ -15,7 +15,7 @@ import FormContainer from "../Form/Form";
 import axios from "axios";
 
 import { Console } from "console";
-
+import { useNavigate } from 'react-router-dom';
 const ErrorMessages = {
   EMPTY_FIELDS: "Visi laukai yra privalomi!",
   WRONG_LOGIN: "Neteisingi prisijungimo duomenys",
@@ -23,6 +23,7 @@ const ErrorMessages = {
 };
 
 const Login: React.FC = () => {
+  
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,7 +36,7 @@ const Login: React.FC = () => {
       username: formData.get("userName"),
       password: formData.get("password"),
     };
-
+    const navigate = useNavigate();
     try {
       const { data } = await api.post("/api/login", loginData);
       sessionStorage.setItem("token", data.accessToken);
@@ -43,7 +44,8 @@ const Login: React.FC = () => {
       sessionStorage.setItem("name", data.userName);
       sessionStorage.setItem("admin", data.admin);
       sessionStorage.setItem("image", data.image64);
-      window.location.href = "/";
+      
+      navigate('/home');
     
     } catch (error: any) {
       if (axios.isAxiosError(error)) {

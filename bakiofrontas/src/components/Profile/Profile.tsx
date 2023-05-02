@@ -115,14 +115,18 @@ export const Profile = () => {
     }
   };
 
-
+console.log(window.location.href)
   return (
     <div className='userInfo'>
 
 {currentUser ? (
       <Box sx={{ display: 'flex', borderRadius: 2, marginBottom: 15, boxShadow: '0 4px 6px lightgrey' }}>
         <Avatar src={`data:image/jpeg;base64,${currentUser.profileImageBase64}`} sx={{ margin: 5, height: 100, width: 100 }} variant="rounded" />
+        <Box>
         <p style={{ fontSize: 25 }}>{currentUser.userName}</p>
+        </Box>
+        
+        <p style={{ fontSize: 20 }}>{currentUser.name}</p>
       </Box>
  ) : (
   <div>Loading...</div>
@@ -151,10 +155,10 @@ export const Profile = () => {
         }}>
           <Box
             sx={style}>
-            <Link  to={`/profile ${userName? `/${userName}` : ``}` } component={RouterLink} >Shares</Link>
+            <Link  to={`/profile${userName? `/${userName}` : ``}` } component={RouterLink} >Shares</Link>
           </Box>
           <Box sx={style}>
-            <Link to={`/list/profile ${userName? `/${userName}` : ``}`} component={RouterLink}>List</Link>
+            <Link to={`/list/profile${userName? `/${userName}` : ``}`} component={RouterLink}>List</Link>
           </Box>
         </Box>
       </Box>

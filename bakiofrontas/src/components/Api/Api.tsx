@@ -15,6 +15,22 @@ const authConfig = {
   },
 };
 
+
+const getRequest= async (url: string, postData: any) => {
+  const authorizationToken = `Bearer ${sessionStorage.getItem("token")}`;
+  console.log(url)
+  console.log(postData)
+  const { data } = await axios.get(`${url}${postData}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: authorizationToken
+      },
+    })
+  return(data)
+}
+
 async function makePostRequest(url: string, postData: any) {
   const authorizationToken = `Bearer ${sessionStorage.getItem("token")}`;
 
@@ -69,4 +85,4 @@ export const logout = () => {
 };
 
 
-export { api, authConfig, makePostRequest, makeDeleteRequest};
+export { api, authConfig, makePostRequest, makeDeleteRequest,getRequest};

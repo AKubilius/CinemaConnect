@@ -4,6 +4,7 @@ using Bakis.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bakis.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230430120419_challengeCondition")]
+    partial class challengeCondition
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,9 +69,10 @@ namespace Bakis.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChallengeId");
+                    b.HasIndex("ChallengeId")
+                        .IsUnique();
 
-                    b.ToTable("ChallengeConditions");
+                    b.ToTable("ChallengeCondition");
                 });
 
             modelBuilder.Entity("Bakis.Data.Models.Comment", b =>
@@ -230,8 +233,9 @@ namespace Bakis.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<int>("MovieID")
-                        .HasColumnType("int");
+                    b.Property<string>("MovieID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -390,6 +394,7 @@ namespace Bakis.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -450,39 +455,6 @@ namespace Bakis.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserRooms");
-                });
-
-            modelBuilder.Entity("Bakis.Data.Models.WatchingRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FriendId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("InvitedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("WatchingDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FriendId");
-
-                    b.HasIndex("InvitedById");
-
-                    b.ToTable("WatchingRequests");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -621,8 +593,8 @@ namespace Bakis.Data.Migrations
             modelBuilder.Entity("Bakis.Data.Models.ChallengeCondition", b =>
                 {
                     b.HasOne("Bakis.Data.Models.Challenge", null)
-                        .WithMany("Conditions")
-                        .HasForeignKey("ChallengeId")
+                        .WithOne("Condition")
+                        .HasForeignKey("Bakis.Data.Models.ChallengeCondition", "ChallengeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -713,7 +685,9 @@ namespace Bakis.Data.Migrations
 
                     b.HasOne("Bakis.Data.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Challenge");
 
@@ -737,23 +711,6 @@ namespace Bakis.Data.Migrations
                     b.Navigation("Room");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Bakis.Data.Models.WatchingRequest", b =>
-                {
-                    b.HasOne("Bakis.Data.Models.User", "Friend")
-                        .WithMany()
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Bakis.Data.Models.User", "InvitedBy")
-                        .WithMany()
-                        .HasForeignKey("InvitedById");
-
-                    b.Navigation("Friend");
-
-                    b.Navigation("InvitedBy");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -809,7 +766,8 @@ namespace Bakis.Data.Migrations
 
             modelBuilder.Entity("Bakis.Data.Models.Challenge", b =>
                 {
-                    b.Navigation("Conditions");
+                    b.Navigation("Condition")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Bakis.Data.Models.Room", b =>

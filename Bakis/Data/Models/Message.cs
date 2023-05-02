@@ -10,6 +10,8 @@ namespace Bakis.Data.Models
         public string Body { get; set; }
         public DateTime DateTime { get; set; }
 
+        public Boolean IsMovie { get; set; } = false;
+
         public int RoomId { get; set; }
         public Room Room { get; set; }
 

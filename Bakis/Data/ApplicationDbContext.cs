@@ -17,7 +17,11 @@ namespace Bakis.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<UserRoom> UserRooms { get; set; }
         public DbSet<UserCompatibility> UserCompatibilities { get; set; }
-       
+        public DbSet<Challenge> Challenges { get; set; }
+        public DbSet<UserChallenge> UserChallenges { get; set; }
+        public DbSet<ChallengeCondition> ChallengeConditions { get; set; }
+
+        public DbSet<WatchingRequest> WatchingRequests { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -39,8 +43,6 @@ namespace Bakis.Data
                 .HasOne(m => m.Sender)
                 .WithMany(u => u.SentMessages)
                 .HasForeignKey(m => m.SenderId);
-
-            // Other configurations ...
         }
 
     }

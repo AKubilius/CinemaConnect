@@ -69,11 +69,26 @@ const ChatContainer: React.FC = () => {
                                             width: 600,
                                             backgroundColor: (theme) =>
                                                 theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+                                                overflowY: 'auto',
+                                                '&::-webkit-scrollbar': {
+                                                    width: '0.4em',
+                                                  },
+                                               
+                                                 // Add this line to make it scrollable
                                         }}>
-                                        <main style={{position:'absolute',bottom:0, width:'100%'}}>
+                                        <main style={{width: '100%', paddingBottom: '1rem'}}>
                                             <Chat/>
+                                           
                                         </main>
+                                       
                                     </Paper>
+                                    <Box sx={{
+                                                backgroundColor:'blue',
+                                                position:'sticky'
+
+                                            }}>
+a
+                                            </Box>
                                 </Grid>
                                 <Grid key={3} item>
                                     <Paper

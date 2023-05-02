@@ -21,6 +21,8 @@ import { Profile } from '../Profile/Profile';
 import { useParams, useLocation } from 'react-router-dom';
 import MyList from '../Mylist/Mylist';
 import { useEffect } from 'react';
+import Callendar from '../Callendar/Callendar';
+import ChallengesBox from '../Challenge/ChallengesBox';
 
 export default function SimpleContainer() {
     const [value, setValue] = React.useState<boolean>(true);
@@ -57,7 +59,9 @@ export default function SimpleContainer() {
                 <Grid key={3} item>
                   <Paper sx={{ height: '100%', width: 350 }}>
                     <aside>
-                     
+                     <Callendar/>
+                     <ChallengesBox
+                     userName={userName} />
                     </aside>
                   </Paper>
                 </Grid>
