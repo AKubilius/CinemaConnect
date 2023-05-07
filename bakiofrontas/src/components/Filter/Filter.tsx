@@ -25,8 +25,10 @@ export default function Filter() {
   return (
     <div>
       <Box>
-          <h3 style={{textAlign: 'center'}}>Kategorijos</h3>
-          {genres.genres?.map((genre: any) => (
+        <h3 style={{ textAlign: "center" }}>Kategorijos</h3>
+        {genres.genres
+          ?.sort((a: any, b: any) => a.name.localeCompare(b.name))
+          .map((genre: any) => (
             <FilterOption name={genre.name} id={genre.id} key={genre.id} />
           ))}
       </Box>

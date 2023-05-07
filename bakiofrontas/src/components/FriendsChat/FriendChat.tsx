@@ -15,6 +15,7 @@ interface IUser {
   surname: any;
   id:any;
   image64:string;
+  index?: number;
 }
 
 
@@ -23,7 +24,8 @@ const User: React.FC<IUser> = ({
   name,
   surname,
   image64,
-  id
+  id,
+  index
 }) => {
 
 const [roomId,setroomId] = useState<any>([]);
@@ -52,15 +54,28 @@ const [roomId,setroomId] = useState<any>([]);
     fetchRoomId()
   }, [])
 
+  var boxSx = {
+    color: "white",
+    "&:hover": {
+      opacity: [0.9, 0.8, 0.7],
+    },
+  };
+
+  var firstBoxSx = {
+    ...boxSx,
+    borderTop: "solid",
+    borderBottom: "solid",
+  };
+
+  var otherBoxSx = {
+    ...boxSx,
+    borderBottom: "solid",
+  };
+
   return (
 
 <Link to={`/chat/${roomId}`} style={{ textDecoration: 'none', color: 'blue' }}>
-     <Box sx={{
-      color:'white',
-        '&:hover': {
-            opacity: [0.9, 0.8, 0.7],
-          }
-     }}>
+     <Box sx={index === 0 ? firstBoxSx: otherBoxSx}>
         
     <div style={{display: 'flex'}}>
       <Avatar src={`data:image/jpeg;base64,${image64}`} sx={{ margin:2 }} variant="rounded" />
