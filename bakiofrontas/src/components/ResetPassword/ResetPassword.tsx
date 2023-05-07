@@ -5,7 +5,6 @@ function ResetPassword() {
   const [newPassword, setNewPassword] = useState('');
   const location = useLocation();
 
-
   async function confirmResetPassword(email: string | null, token: string | null, newPassword: string) {
     const response = await fetch("https://localhost:7019/api/confirm-reset-password", {
       method: "POST",

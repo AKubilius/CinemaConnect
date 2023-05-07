@@ -14,41 +14,48 @@ import axios from 'axios';
 import Alert from '@mui/material/Alert';
 import poster from './Poster.png';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import { useLocation } from 'react-router-dom';
 
-const ErrorMessages = {
-  EMPTY_FIELDS: 'Visi laukai yra privalomi!',
-  MISSMATCHING_PASSWORDS: 'Slaptažodžiai turi sutapti',
-  INCORRECT_PASSWORD_FORMAT:
-    'Slaptažodį turi sudaryt bent 8 simboliai, įskaitant skaitmenį, didžiąją raidę ir simbolį',
-  INCORRECT_EMAIL_FORMAT: 'Netinkamas El. Paštas',
-  UNEXPECTED_ERROR: 'Įvyko netikėta klaida, bandykite vėliau',
-};
+const SUCCESS_MESSAGE = 'Slaptažodžio priminimo el. laiškas išsiųstas';
 
-const SUCCESS_MESSAGE = 'Registracija patvirtinta';
+export default function ResetPasswordNewCurrentPasswordSide() {
+  const [isPaswordChangedSuccessfully] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const location = useLocation();
 
-export default function RegistrationSide() {
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isRegistrationSuccessful, setIsRegistrationSuccessful] =
-    useState(false);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage('');
-    const formData = new FormData(e.currentTarget);
-    const registrationData = {
-      userName: formData.get('userName'),
-      email: formData.get('email'),
-      password: formData.get('password'),
-    };
-
-    try {
-      await api.post('/api/register', registrationData);
-      setIsRegistrationSuccessful(true);
+  async function confirmResetPassword(email: string | null, token: string | null, newPassword: string) {
+    const response = await fetch("https://localhost:7019/api/confirm-reset-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Email: email,
+        Token: token,
+        NewPassword: newPassword,
+      }),
+    });
+  
+    if (response.ok) {
+      const message = await response.text();
+      console.log(message);
       window.location.href = "/home";
-    } catch (error: any) {
-      setErrorMessage(ErrorMessages.UNEXPECTED_ERROR);
+      // Handle success, e.g., show a success message or redirect the user
+    } else {
+      const error = await response.json();
+      console.error(error);
+      // Handle error, e.g., show an error message
     }
+  }
+
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    confirmResetPassword(email, token, newPassword);
   };
+
+  const searchParams = new URLSearchParams(location.search);
+  const token = searchParams.get('token');
+  const email = searchParams.get('email');
 
   return (
     <Grid container sx={{ height: '100vh' }}>
@@ -83,54 +90,38 @@ export default function RegistrationSide() {
             <AppRegistrationIcon />
           </Avatar>
           <Typography component='h1' variant='h5'>
-            Registracija
+            Slaptažodžio pakeitimas
           </Typography>
           <Box component='form' onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <TextField
-              margin='normal'
-              required
-              fullWidth
-              id='userName'
-              label='Vardas'
-              name='userName'
-              autoFocus
-            />
 
-            <TextField
-              margin='normal'
-              required
-              fullWidth
-              id='email'
-              label='El. Paštas'
-              name='email'
-            />
-            
-            <TextField
+          <TextField
               margin='normal'
               required
               fullWidth
               name='password'
-              label='Slaptažodis'
+              label='Naujas slaptažodis'
               type='password'
               id='password'
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
             />
-            
-            {errorMessage && <Alert severity='error'>{errorMessage}</Alert>}
-            {isRegistrationSuccessful && (
+                        
+            {isPaswordChangedSuccessfully && (
               <Alert severity='success'>{SUCCESS_MESSAGE}</Alert>
             )}
+
             <Button
               type='submit'
               fullWidth
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
             >
-              Registruotis
+              Pakeisti slaptažodį
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href='/login' variant='body2'>
-                  Turite paskyrą? Prisijunkite
+                <Link href='/home' variant='body2'>
+                  Grįžti į pradžią
                 </Link>
               </Grid>
             </Grid>

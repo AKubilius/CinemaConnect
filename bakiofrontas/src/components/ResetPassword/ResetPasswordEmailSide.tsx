@@ -15,40 +15,10 @@ import Alert from '@mui/material/Alert';
 import poster from './Poster.png';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 
-const ErrorMessages = {
-  EMPTY_FIELDS: 'Visi laukai yra privalomi!',
-  MISSMATCHING_PASSWORDS: 'Slaptažodžiai turi sutapti',
-  INCORRECT_PASSWORD_FORMAT:
-    'Slaptažodį turi sudaryt bent 8 simboliai, įskaitant skaitmenį, didžiąją raidę ir simbolį',
-  INCORRECT_EMAIL_FORMAT: 'Netinkamas El. Paštas',
-  UNEXPECTED_ERROR: 'Įvyko netikėta klaida, bandykite vėliau',
-};
+const SUCCESS_MESSAGE = 'Slaptažodžio priminimo el. laiškas išsiųstas';
 
-const SUCCESS_MESSAGE = 'Registracija patvirtinta';
-
-export default function RegistrationSide() {
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isRegistrationSuccessful, setIsRegistrationSuccessful] =
-    useState(false);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage('');
-    const formData = new FormData(e.currentTarget);
-    const registrationData = {
-      userName: formData.get('userName'),
-      email: formData.get('email'),
-      password: formData.get('password'),
-    };
-
-    try {
-      await api.post('/api/register', registrationData);
-      setIsRegistrationSuccessful(true);
-      window.location.href = "/home";
-    } catch (error: any) {
-      setErrorMessage(ErrorMessages.UNEXPECTED_ERROR);
-    }
-  };
+export default function ResetPasswordEmailSide() {
+  const [isEmailSent] = useState(false);
 
   return (
     <Grid container sx={{ height: '100vh' }}>
@@ -83,18 +53,9 @@ export default function RegistrationSide() {
             <AppRegistrationIcon />
           </Avatar>
           <Typography component='h1' variant='h5'>
-            Registracija
+            Slaptažodžio priminimas
           </Typography>
-          <Box component='form' onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <TextField
-              margin='normal'
-              required
-              fullWidth
-              id='userName'
-              label='Vardas'
-              name='userName'
-              autoFocus
-            />
+          <Box component='form' onSubmit={console.log} sx={{ mt: 1 }}>
 
             <TextField
               margin='normal'
@@ -104,33 +65,23 @@ export default function RegistrationSide() {
               label='El. Paštas'
               name='email'
             />
-            
-            <TextField
-              margin='normal'
-              required
-              fullWidth
-              name='password'
-              label='Slaptažodis'
-              type='password'
-              id='password'
-            />
-            
-            {errorMessage && <Alert severity='error'>{errorMessage}</Alert>}
-            {isRegistrationSuccessful && (
+                        
+            {isEmailSent && (
               <Alert severity='success'>{SUCCESS_MESSAGE}</Alert>
             )}
+
             <Button
               type='submit'
               fullWidth
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
             >
-              Registruotis
+              Priminti slaptažodį
             </Button>
             <Grid container>
               <Grid item xs>
                 <Link href='/login' variant='body2'>
-                  Turite paskyrą? Prisijunkite
+                  Prisiminėte slaptažodį? Prisijunkite
                 </Link>
               </Grid>
             </Grid>
