@@ -84,7 +84,7 @@ namespace Bakis.Hubs
             _context.Messages.Add(newMessage);
 
             await _context.SaveChangesAsync();
-            await Clients.Group(roomId).SendAsync("ReceiveMessage", user, message);
+            await Clients.Group(roomId).SendAsync("ReceiveMessage", newMessage.Id, user, message);
         }
 
         public async Task SendRequestToRoom(string roomId, string user, string message, Boolean isMovie, string? friendId, DateTime watchDate)

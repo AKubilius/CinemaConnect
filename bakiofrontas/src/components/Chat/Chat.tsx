@@ -57,9 +57,11 @@ useEffect(() => {
     connection
       .start()
       .then(() => {
-        connection.on('ReceiveMessage', async (id:number,sender: User, body: string, image64: string, isMovie: boolean,dateTime:Date) => {
-        
-          setMessages((prevMessages) => [...prevMessages, { id,sender, body, image64, isMovie,dateTime }]);
+        connection.on('ReceiveMessage', async (id: number, sender: User, body: string, image64: string, isMovie: boolean, dateTime: Date) => {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { id, sender: { ...sender, userName: sender.userName || userName }, body, image64, isMovie, dateTime },
+          ]);
         });
       })
       .catch((e) => console.log('Connection failed: ', e));
@@ -123,8 +125,9 @@ useEffect(() => {
 }, [messages]);
 
 if (!roomID) {
-  return <div>Please select a chat room</div>; // Or return a blank div: <div></div>
+  return <h4 style={{display:'flex', justifyContent:'center',color:'black'}}>Pasirinkite vartotoją</h4>; // Or return a blank div: <div></div>
 }
+
 return (
   <Box 
   >

@@ -32,7 +32,6 @@ const Request: React.FC<Request> = ({
       const { data, status } = await axios.post<any>(`https://localhost:7019/FriendRequest/accept/${Id.id}`,
         {
           headers: {
-            'Content-Type': 'application/json',
             Accept: 'application/json',
             Authorization: token
           },

@@ -45,7 +45,6 @@ const SendMessage: FC<SendMessageProps> = ({ input, setInput, sendMessage, conne
     }
   };
 
-
   if(!roomID)
   {
     return <div></div>
@@ -71,7 +70,7 @@ const SendMessage: FC<SendMessageProps> = ({ input, setInput, sendMessage, conne
   onChange={(e) => setInput(e.target.value)}
   onKeyPress={(e) => {
     if (e.key === 'Enter') {
-      handleSendMessage();
+      sendMessage();
     }
   }}
 />

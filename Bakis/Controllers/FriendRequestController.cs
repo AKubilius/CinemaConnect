@@ -112,7 +112,7 @@ namespace Bakis.Controllers
         }
 
         [HttpPost("accept/{id}")]
-        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+       // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<FriendRequest>>> AcceptRequest(int id)
         {
             var List = await _databaseContext.FriendRequests.FindAsync(id);

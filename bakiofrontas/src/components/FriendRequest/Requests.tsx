@@ -32,17 +32,7 @@ export default function Requests() {
     return (
         <div>
 
-            {users ? <Box
-                sx={{
-                    bgcolor: 'lightgrey',
-                    display: 'flex',
-                    borderRadius: 1,
-                    boxShadow: '0 4px 6px grey',
-                    width: '25vh',
-                    justifyContent: 'space-between',
-                    alignContent: 'center'
-                }}>
-            </Box> : users?.slice(0, 3).map((user: any, index: React.Key | null | undefined) => (
+            {users?.slice(0, 3).map((user: any, index: React.Key | null | undefined) => (
                 <Request
                     username={user.name}
                     id={user.id}
