@@ -25,6 +25,8 @@ import RegisterSide from './components/Register/RegisterSide';
 import NotFound from './components/NotFound/NotFound';
 import ProtectedRoutes from './components/ProtectedRoute/ProtectedRoute';
 import ProtectedWrapper from './components/ProtectedRoute/ProtectedWrapper';
+import ResetPasswordEmailSide from './components/ResetPassword/ResetPasswordEmailSide';
+import ResetPasswordNewCurrentPasswordSide from './components/ResetPassword/ResetPasswordNewCurrentPasswordSide';
 
 
 const theme = createTheme({
@@ -116,11 +118,10 @@ const theme = createTheme({
   }
 });
 
-
   const shouldRenderNavbar = () => {
     
     const currentPath = window.location.pathname;
-    return currentPath !== '/login' && currentPath !== '/register' && currentPath !== '/not-found';
+    return currentPath !== '/login' && currentPath !== '/register' && currentPath !== '/not-found' && currentPath !==  '/reset-password' && currentPath !==  '/new-password';
   };
 
 const root = ReactDOM.createRoot(
@@ -136,7 +137,8 @@ root.render(
   <Route path="/" element={<Navigate replace to="/home" />} />
   <Route path="/login" element={<LoginSide />} />
   <Route path="/register" element={<RegisterSide />} />
-  <Route path="/reset-password" element={<ResetPassword />} />
+  <Route path="/reset-password" element={<ResetPasswordEmailSide />} />
+  <Route path="/new-password" element={<ResetPasswordNewCurrentPasswordSide />} />
   <Route path="/not-found" element={<NotFound />} />
   
   <Route
