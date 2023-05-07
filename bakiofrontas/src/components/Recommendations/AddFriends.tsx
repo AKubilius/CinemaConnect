@@ -24,22 +24,18 @@ const AddFriends = () => {
   return (
     <div>
       <h3 style={{ textAlign: "center" }}>Pasirinkite draugą</h3>
-      {friends && friends.length > 0 ? (
-        friends.map((user: any, index: number) => (
-          <>
-            <Friend
-              username={user.userName}
-              name={user.name}
-              surname={user.surname}
-              image64={user.profileImageBase64}
-              id={user.id}
-              index={index}
-            />
-          </>
-        ))
-      ) : (
-        <h3 style={{ textAlign: "center" }}>Jūs neturite draugų</h3>
-      )}
+      {friends.map((user: any, index: number) => (
+        <>
+          <Friend
+            username={user.userName}
+            name={user.name}
+            surname={user.surname}
+            image64={user.profileImageBase64}
+            id={user.id}
+            index={index}
+          />
+        </>
+      ))}
     </div>
   );
 };
