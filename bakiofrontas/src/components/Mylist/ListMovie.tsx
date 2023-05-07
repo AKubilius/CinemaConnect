@@ -35,7 +35,7 @@ const ListMovie: React.FC<Movie> = ({
                     src={`https://image.tmdb.org/t/p/original${poster_path}`}
                 />
                 <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, width: '100%', marginTop: 1 }}>
-                    <Link to={`/movie/${id}`}>{title}</Link>
+                    <Link to={`/movie/${id}`} style={{color:'white'}}>{title}</Link>
                     <Box sx={{ borderRadius: 2, marginBottom: 0, display: 'flex', flexDirection: 'flex', alignItems: 'end', justifyContent: 'left', marginTop: 15 }}>
                        
                     </Box>

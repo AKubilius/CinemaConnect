@@ -88,6 +88,7 @@ export default function Collection() {
                     backdrop_path={movie.backdrop_path}
                     title={movie.title}
                     createdDate ={movie.release_date}
+                    rating = {movie.vote_average}
                     key={index}
                 />
             ))}

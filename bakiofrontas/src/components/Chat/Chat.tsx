@@ -15,52 +15,58 @@ interface Movie {
 }
 
 interface Message {
+  id:number;
   sender: User;
   body: string;
   image64: string;
   isMovie: boolean;
   movie?: Movie;
+  dateTime:Date;
 }
 
-const Chat: React.FC = () => {
-  
-const userName = `${sessionStorage.getItem("name")}`;
-const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
-const [messages, setMessages] = useState<Message[]>([]);
-const [input, setInput] = useState('');
-const [roomId, setRoomId] = useState<string | null>(null);
-const messagesEndRef = useRef<null | HTMLDivElement>(null);
+interface ChatProps {
+  connection: signalR.HubConnection | null;
+  setConnection: (connection: signalR.HubConnection | null) => void;
+  roomID: string | undefined;
+}
 
 const token = `Bearer ${sessionStorage.getItem("token")}`;
 
-useEffect(() => {
- 
-  const newConnection = new signalR.HubConnectionBuilder()
-    .withUrl(`https://localhost:7019/chatHub/?paramName1=${userName}`, {
-    accessTokenFactory: () => token,
-    
-  })
-    .withAutomaticReconnect()
-    .build();
+const Chat: React.FC<ChatProps> = ({
+  connection,
+  setConnection,
+  roomID,
+}) => {
+  const userName = `${sessionStorage.getItem("name")}`;
+  const [messages, setMessages] = useState<Message[]>([]);
+  
 
-  setConnection(newConnection);
-}, []);
+  useEffect(() => {
+    const newConnection = new signalR.HubConnectionBuilder()
+      .withUrl(`https://localhost:7019/chatHub/?paramName1=${userName}`, {
+        accessTokenFactory: () => token,
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    setConnection(newConnection);
+  }, []);
 
 useEffect(() => {
   if (connection) {
     connection
       .start()
       .then(() => {
-        connection.on('ReceiveMessage', async (sender: User, body: string, image64: string, isMovie: boolean) => {
+        connection.on('ReceiveMessage', async (id:number,sender: User, body: string, image64: string, isMovie: boolean,dateTime:Date) => {
         
-          setMessages((prevMessages) => [...prevMessages, { sender, body, image64, isMovie }]);
+          setMessages((prevMessages) => [...prevMessages, { id,sender, body, image64, isMovie,dateTime }]);
         });
       })
       .catch((e) => console.log('Connection failed: ', e));
   }
 }, [connection]);
 
-const { id: roomID } = useParams<{ id: string | undefined }>();
+
 
 const joinRoom = async (roomIdToJoin: string) => {
   if (connection && connection.state === signalR.HubConnectionState.Connected) {
@@ -77,21 +83,6 @@ useEffect(() => {
     fetchMessages(roomID);
   }
 }, [connection, roomID]);
-
-const leaveRoom = async () => {
-  if (connection && roomId && connection.state === signalR.HubConnectionState.Connected) {
-    await connection.send('LeaveRoom', roomId);
-    setRoomId(null);
-  }
-};
-
-const sendMessage = async () => {
-  if (input && connection && roomID && connection.state === signalR.HubConnectionState.Connected) {
-    await connection.send('SendMessageToRoom', roomID, userName, input);
-    setInput('');
-  }
-};
-
 
 const fetchMessages = async (roomID: string) => {
   if (connection && roomID && connection.state === signalR.HubConnectionState.Connected) {
@@ -121,61 +112,44 @@ const fetchMovieData = async (movieId: any) => {
   };
 };
 
+const messagesEndRef = useRef<null | HTMLDivElement>(null);
+
 const scrollToBottom = () => {
-  if (messagesEndRef.current) {
-    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }
-};
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+}
 
 useEffect(() => {
-  scrollToBottom();
+  scrollToBottom()
 }, [messages]);
-
-
-
-
 
 if (!roomID) {
   return <div>Please select a chat room</div>; // Or return a blank div: <div></div>
 }
 return (
-  <>
+  <Box 
+  >
 {messages.map((message, index) => (
      <div
      key={index}
      className={`message ${message.sender.userName === userName ? 'my-message' : 'other-message'}`}
    >
       {message.isMovie ? (
-      <div className="message-content">
+      
         <ChatMovie 
         title={message.movie?.title}
         Url={message.movie?.posterUrl}
+        watchingDate={message.dateTime}
+        id={message.id}
         />
-      </div>
+    
     ) : (
       <div className="message-content">{message.body}</div>
-      
     )}
-    
    </div>
       ))}
-      
-<div style={{display:'flex'}}>
-      <input
-      style={{width:'100%'}}
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter') {
-            sendMessage();
-          }
-        }}
-      />
-      <button onClick={sendMessage}>Send</button>
-    </div>
-    
-  </>
+    <div 
+  ref={messagesEndRef}></div>
+  </Box>
 );
 };
 

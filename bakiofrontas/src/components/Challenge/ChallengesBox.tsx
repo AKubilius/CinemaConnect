@@ -2,6 +2,9 @@ import { Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import {getRequest} from "../Api/Api";
 import Challenge from './Challenge';
+import ChallengesModal from './ChallengesModal';
+import CustomModalWithTabs from './ChallengeTest';
+import ChallengesTest from './ChallengeTest';
 
 interface Challenges
 {
@@ -25,7 +28,8 @@ const boxStyles = {
 }
 const h4Styles ={
     justifyContent:'center',
-    display:'flex'}
+    display:'flex',
+  marginBottom:0}
 
     const ChallengesBox: React.FC<ChallengesBoxProps> = ({ userName }) => {
 
@@ -33,7 +37,7 @@ const h4Styles ={
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getRequest('https://localhost:7019/api/Challenge/MyChallenges/', userName ? userName : '/');
+      const data = await getRequest('https://localhost:7019/api/Challenge/MyChallenges/', userName ? userName : '');
       setChallenges(data);
     };
     fetchData();
@@ -45,11 +49,15 @@ const h4Styles ={
     <Box sx={boxStyles}>
         <h4 style={h4Styles}>Iššūkiai</h4>
 
-        {challenges?.map((challenge: userChallenge) => (
+        {challenges?.filter((challenge: userChallenge) => !challenge.completed).slice(0, 3).map((challenge: userChallenge) => (
         <Challenge
         userChallenge={challenge}
         />
       ))}
+      <ChallengesModal 
+      userChallenge = {challenges}
+      />
+      
     </Box>
   )
 }

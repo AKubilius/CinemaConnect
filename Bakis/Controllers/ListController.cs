@@ -69,6 +69,8 @@ namespace Bakis.Controllers
 
             var List = allList.Where(s => s.UserId == user.Id).ToList();//cia ne tiap
 
+
+
             return Ok(List);
         }
 
@@ -191,6 +193,12 @@ namespace Bakis.Controllers
                     conditionMet = true;
                 }
             }
+
+            if (condition.Type == "Any")
+            {
+                    conditionMet = true;
+            }
+
             // Add more conditions here if needed
 
             return conditionMet;
@@ -223,7 +231,7 @@ namespace Bakis.Controllers
 
         [HttpGet("isListed/{id}")]
         [Authorize(Roles = Roles.User + "," + Roles.Admin)]
-        public async Task<ActionResult<List<MyList>>> GetIsListed(int id)
+        public async Task<ActionResult<List<MyList>>> GetIsListedInPosts(int id)
         {
             var List = await _databaseContext.Posts.FindAsync(id);
             if (List == null)
@@ -238,6 +246,22 @@ namespace Bakis.Controllers
 
             return Ok(true);
         }
+
+        [HttpGet("listedMovie/{id}")]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        public async Task<ActionResult<List<MyList>>> GetIsListedInMovies(int id)
+        {
+            var UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            var inList = _databaseContext.Lists.SingleOrDefault(e => e.UserId == UserId && e.MovieID == id);
+
+            if (inList == null)
+                return Ok(false);
+
+            return Ok(true);
+        }
+
+
 
         //var Likes = await _databaseContext.Likes.ToListAsync();
         //_databaseContext.Likes.RemoveRange(Likes);

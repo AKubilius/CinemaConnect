@@ -20,7 +20,6 @@ namespace Bakis.Controllers
         public CommentController(ApplicationDbContext context, IAuthorizationService authorizationService)
         {
             _databaseContext = context;
-
             _authorizationService = authorizationService;
         }
 
@@ -35,7 +34,6 @@ namespace Bakis.Controllers
             var Comments = await _databaseContext.Comments.Include(m => m.User)
         .Take(50)
         .ToListAsync();
-
 
             if (Comments == null)
                 return NoContent();
@@ -72,9 +70,6 @@ namespace Bakis.Controllers
         {
             comment.UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             comment.User = await _databaseContext.Users.FindAsync(comment.UserId);
-
-
-
 
             _databaseContext.Comments.Add(comment);
             await _databaseContext.SaveChangesAsync();

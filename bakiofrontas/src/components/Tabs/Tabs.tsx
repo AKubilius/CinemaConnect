@@ -112,7 +112,7 @@ export default function BasicTabs() {
                 <Avatar src={`data:image/jpeg;base64,${sessionStorage.getItem("image")}`} ></Avatar>
                 </Link>
                 <Button onClick={handleLogout}>
-      Logout
+      Atsijungti
     </Button>
               </Box>) : (<Box>
                 <Link  to={'/login'} component={RouterLink} >Prisijungti</Link>

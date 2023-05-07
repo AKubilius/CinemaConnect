@@ -102,6 +102,7 @@ namespace Bakis.Hubs
                 IsMovie = isMovie
             };
             _context.Messages.Add(newMessage);
+            await _context.SaveChangesAsync();
             if (isMovie)
             {
                 var watchingRequest = new WatchingRequest
@@ -110,7 +111,9 @@ namespace Bakis.Hubs
                     InvitedBy = userId,
                     FriendId = friendId,
                     CreatedAt = DateTime.UtcNow,
-                    WatchingDate = watchDate // You may want to set a different date/time for the watching date
+                    WatchingDate = watchDate,
+                    MessageId = newMessage.Id// You may want to set a different date/time for the watching date
+                    
                 };
 
                 _context.WatchingRequests.Add(watchingRequest);

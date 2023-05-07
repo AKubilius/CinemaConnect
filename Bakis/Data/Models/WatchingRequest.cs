@@ -16,6 +16,7 @@
         public string FriendId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime WatchingDate { get; set; }
+        public int MessageId { get; set; }
 
         public User? InvitedBy { get; set; } = null;
         public User? Friend { get; set; } = null;

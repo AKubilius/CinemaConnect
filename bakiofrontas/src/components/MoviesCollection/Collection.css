@@ -6,6 +6,8 @@
 .movies{
     display: flex;
     align-items: start;
+    
+
 }
 
 .movies a{
@@ -22,4 +24,16 @@
 .movieDesc{
     
     align-items: start;
+}
+
+.genres {
+    margin: 1rem 0;
+}
+
+.genre {
+    padding: .2rem;
+    border: 2px solid white;
+    border-radius: 20px;
+    margin-right: 5px;
+    font-size:small;
 }

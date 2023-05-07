@@ -126,6 +126,7 @@ namespace Bakis.Controllers
                     backdrop_path = (string)movie.backdrop_path,
                     poster_path = (string)movie.poster_path,
                     release_date = (string)movie.release_date,
+                    average_count = (string)movie.average_count
                 };
 
                 recommendations.Add(movieDetails);
@@ -145,6 +146,4 @@ namespace Bakis.Controllers
                 .ToList();
         }
     }
-  
-
 }

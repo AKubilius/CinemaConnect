@@ -78,7 +78,7 @@ const theme = createTheme({
       fontSize: '1rem',
       fontWeight: 700,
       lineHeight: 1.2,
-      marginBottom:0
+
 
 
     },

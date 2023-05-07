@@ -28,7 +28,7 @@ const handleClick = () => {
 };
 
 return (
-    <div className='movie'>
+    <div className='movies'>
       <Box
       
         component="img"

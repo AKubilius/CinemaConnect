@@ -112,9 +112,6 @@ namespace Bakis.Controllers
             return Ok(user);
         }
 
-
-       
-
         [HttpPut]
         [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<User>>> Update(User request)

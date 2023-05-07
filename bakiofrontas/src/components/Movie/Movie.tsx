@@ -1,10 +1,53 @@
 import React, {useEffect, useState} from "react"
 import "./Movie.css"
 import { useParams } from "react-router-dom"
+import { makeDeleteRequest, makePostRequest } from "../Api/Api";
+import axios from "axios";
+import Button from "@mui/material/Button/Button";
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const Movie = () => {
     const [currentMovieDetail, setMovie] = useState<any>([]);
     const { id } = useParams()
+
+
+    const [inList, setInList] = useState(false);
+    const handleClick = (Id: any) => {
+     
+      inList ?  deleteFromList(Id) :createRequest(Id)
+      setInList(!inList);
+    };
+    const token = `Bearer ${sessionStorage.getItem("token")}`
+
+    const fetchIsInList = async () => {
+      const { data } = await axios.get(`https://localhost:7019/list/listedMovie/${id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: token
+          },
+        })
+  
+        setInList(data)
+    }
+    useEffect(() => {
+      fetchIsInList()
+    }, [])
+  
+    async function createRequest(Id: any) {
+        const { data } = await makePostRequest('https://localhost:7019/List/Mylist', { MovieID: `${id}` });
+        console.log(data)
+        return data;
+      }
+    
+      async function deleteFromList(Id: any) {
+        const { data } = await makeDeleteRequest(`https://localhost:7019/List/${id}`);
+    
+        return data;
+      }
+
 
     useEffect(() => {
         getData()
@@ -16,6 +59,8 @@ const Movie = () => {
         .then(res => res.json())
         .then(data => setMovie(data))
     }
+
+ 
 
     return (
         <div className="movie">
@@ -51,22 +96,24 @@ const Movie = () => {
                         </div>
                     </div>
                     <div className="movie__detailRightBottom">
-                        <div className="synopsisText">Apibūdinimas</div>
+                        <div className="synopsisText">Aprašymas 
+                        <Button 
+              onClick={() => handleClick({ id })} 
+             
+              startIcon={inList ? <DeleteIcon/>   :  <AddCircleIcon />} 
+              variant="text"
+              color={inList ? 'secondary' : 'primary' } 
+            >
+              {inList ? "Pašalinti" : "Pridėti" }
+            </Button>
+
+                        </div>
                         <div >{currentMovieDetail ? currentMovieDetail.overview : ""}</div>
                     </div>
                     
                 </div>
             </div>
-            <div className="movie__links">
-                <div className="movie__heading">Useful Links</div>
-                {
-                    currentMovieDetail && currentMovieDetail.homepage && <a href={currentMovieDetail.homepage} target="_blank" style={{textDecoration: "none"}}><p><span className="movie__homeButton movie__Button">Homepage <i className="newTab fas fa-external-link-alt"></i></span></p></a>
-                }
-                {
-                    currentMovieDetail && currentMovieDetail.imdb_id && <a href={"https://www.imdb.com/title/" + currentMovieDetail.imdb_id} target="_blank" style={{textDecoration: "none"}}><p><span className="movie__imdbButton movie__Button">IMDb<i className="newTab fas fa-external-link-alt"></i></span></p></a>
-                }
-            </div>
-            <div className="movie__heading">Production companies</div>
+            <div className="movie__heading">Produkcijos kompanijos</div>
             <div className="movie__production">
                 {
                     currentMovieDetail && currentMovieDetail.production_companies && currentMovieDetail.production_companies.map((company: { logo_path: string; name: string | number | boolean | React.ReactFragment | React.ReactPortal | React.ReactElement<any, string | React.JSXElementConstructor<any>> | null | undefined; }) => (

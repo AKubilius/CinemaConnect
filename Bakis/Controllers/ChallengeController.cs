@@ -35,7 +35,6 @@ namespace Bakis.Controllers
             return User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         }
 
-
         [HttpPost]
         [Authorize(Roles = Roles.Admin)]
         public async Task<ActionResult<Challenge>> CreateChallenge(ChallengeCreateDto challengeCreateDto)
@@ -63,7 +62,7 @@ namespace Bakis.Controllers
         }
 
         [HttpGet("MyChallenges")]
-        [Authorize(Roles = Roles.User)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<UserChallenge>>> Get()
         {
             var allList = await _databaseContext.UserChallenges
@@ -73,9 +72,14 @@ namespace Bakis.Controllers
                 return BadRequest("User has nothing in list");
             var List = allList.Where(s => s.UserId == getCurrentUserId()).ToList();//cia ne tiap
 
-            return Ok(List);
-        }
+            var sortedChallenges = List.OrderByDescending(challenge =>
+            {
+                int progressPercentage = (challenge.Progress * 100) / challenge.Challenge.Count;
+                return progressPercentage;
+            }).ToList();
 
+            return Ok(sortedChallenges);
+        }
 
         [HttpGet("MyChallenges/{userName}")]
         public async Task<ActionResult<List<UserChallenge>>> GetUserList(string userName)
@@ -90,18 +94,38 @@ namespace Bakis.Controllers
 
             var List = allList.Where(s => s.UserId == user.Id).ToList();//cia ne tiap
 
-            return Ok(List);
+            var sortedChallenges = List.OrderByDescending(challenge =>
+            {
+                int progressPercentage = (challenge.Progress * 100) / challenge.Challenge.Count;
+                return progressPercentage;
+            }).ToList();
+
+            return Ok(sortedChallenges);
         }
-
-
 
         // GET api/challenges
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Challenge>>> GetChallenges()
-        {
+        { 
             return await _databaseContext.Challenges.ToListAsync();
         }
-       
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<List<Challenge>>> EditChallenge(int id, ChallengeEditDto request)
+        {
+            var challenge = await _databaseContext.Challenges.FindAsync(id);
+            if (challenge == null)
+                return BadRequest("Challenge not found");
+
+            challenge.Name = request.Name ?? challenge.Name; ;
+            challenge.Description = request.Description ?? challenge.Description; ;
+            challenge.Count = request.Count ?? challenge.Count; ;
+            challenge.Conditions = request.Conditions ?? challenge.Conditions;
+            await _databaseContext.SaveChangesAsync();
+            return Ok(challenge);
+        }
+
+
         [HttpPost("UserChallenge")]
         [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<UserChallenge>>> JoinChallenge(UserChallenge challenge) //STRINGAS ID MOVIE???? perdaryk
@@ -120,6 +144,41 @@ namespace Bakis.Controllers
             _databaseContext.UserChallenges.Add(challenge);
             await _databaseContext.SaveChangesAsync();
             return Ok(await _databaseContext.UserChallenges.ToListAsync());
+        }
+
+        public async Task AddDefaultChallengesToExistingUsers()
+        {
+            var defaultChallenges = await _databaseContext.Challenges.Where(c => c.Id == 3 || c.Id == 4 || c.Id == 5).ToListAsync();
+
+            var users = await _databaseContext.Users.ToListAsync();
+
+            foreach (var user in users)
+            {
+                var userChallenges = await _databaseContext.UserChallenges
+                    .Where(uc => uc.UserId == user.Id)
+                    .ToListAsync();
+
+                var userDefaultChallenges = userChallenges.Where(uc => defaultChallenges.Any(dc => dc.Id == uc.ChallengeId)).ToList();
+
+                if (userChallenges.Count < defaultChallenges.Count)
+                {
+                    foreach (var defaultChallenge in defaultChallenges)
+                    {
+                        if (!userChallenges.Any(uc => uc.ChallengeId == defaultChallenge.Id))
+                        {
+                            var newUserChallenge = new UserChallenge
+                            {
+                                UserId = user.Id,
+                                ChallengeId = defaultChallenge.Id,
+                                Progress = 0,
+                                Completed = false
+                            };
+                            _databaseContext.UserChallenges.Add(newUserChallenge);
+                        }
+                    }
+                }
+            }
+            await _databaseContext.SaveChangesAsync();
         }
     }
 }

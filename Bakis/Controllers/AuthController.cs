@@ -31,6 +31,31 @@ namespace Bakis.Controllers
             _emailService = emailService;
         }
 
+
+        private async Task<IActionResult> AddDefaultChallenges(User newUser)
+        {
+            // Query the default challenges from the database
+            var defaultChallenges = await _dbContext.Challenges.Where(c => c.Id == 3 || c.Id == 4 || c.Id == 5).ToListAsync();
+
+            // Create UserChallenge entries for the new user with the default challenges
+            foreach (var defaultChallenge in defaultChallenges)
+            {
+                var userChallenge = new UserChallenge
+                {
+                    UserId = newUser.Id,
+                    ChallengeId = defaultChallenge.Id,
+                    Progress = 0,
+                    Completed = false
+                };
+                _dbContext.UserChallenges.Add(userChallenge);
+            }
+
+            // Save the changes to the database
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Succesful");
+        }
+
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register(RegisterUserDto registerUserDto)
@@ -49,6 +74,8 @@ namespace Bakis.Controllers
                 return BadRequest("Could not create a user.");
 
             await _userManager.AddToRoleAsync(newUser, Roles.User);
+
+            await AddDefaultChallenges(newUser);
 
             return CreatedAtAction(nameof(Register), new UserDto(newUser.Id, newUser.UserName, newUser.Email));
         }

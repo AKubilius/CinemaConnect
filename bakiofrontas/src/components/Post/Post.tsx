@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import { blueGrey, red} from '@mui/material/colors';
 import Button from '@mui/material/Button';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+
 import './Post.css'
 import axios from 'axios';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField/TextField';
 import Comments  from './Comment';
 import ReplyIcon from '@mui/icons-material/Reply';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import {makePostRequest, makeDeleteRequest} from "../Api/Api";
 
 interface IPost {
@@ -48,7 +49,7 @@ const Post: React.FC<IPost> = ({
 
   const handleClick = (Id: any) => {
    
-    inList ?  deleteUser(Id) :createRequest(Id)
+    inList ?  deleteFromList(Id) :createRequest(Id)
     setInList(!inList);
   };
 
@@ -133,7 +134,6 @@ const Post: React.FC<IPost> = ({
   }, [])
 
 
-
   const fetchIsInList = async () => {
     const { data } = await axios.get(`https://localhost:7019/list/isListed/${id}`,
       {
@@ -170,7 +170,7 @@ const Post: React.FC<IPost> = ({
     return data;
   }
 
-  async function deleteUser(Id: any) {
+  async function deleteFromList(Id: any) {
     const { data } = await makeDeleteRequest(`https://localhost:7019/List/${Id.movieId}`);
 
     return data;
@@ -206,12 +206,11 @@ const Post: React.FC<IPost> = ({
         />
         <Box>
 
-          <Box sx={{ marginLeft: 1, marginRight: 1, borderTop:1, borderBottom:1, borderColor: 'grey', display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
+          <Box sx={{ marginLeft: 5, marginRight: 5, borderTop:1, borderBottom:1, borderColor: 'grey', display: 'flex', alignContent: 'center', justifyContent:'space-between' }}>
+            <div style={{display:'flex'}}>
             <p> {likes} </p>
-
             <Button onClick={() => handleLike({ id })} sx={neutralButtonSx} startIcon={pressedLike ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />} variant="text">Patinka</Button>
-            <Button sx={neutralButtonSx} startIcon={<ReplyIcon />} variant="text">Pasidalinti</Button>
-
+            </div>
             <Button 
               onClick={() => handleClick({ movieId })} 
               sx={inList ? deleteButtonSx : neutralButtonSx } 
@@ -250,6 +249,7 @@ const Post: React.FC<IPost> = ({
                     body={user.body}
                     img={user.user.profileImageBase64}
                     id ={user.id}
+                    user={user.user}
                     key = {user.id}
                 />
             )): null}

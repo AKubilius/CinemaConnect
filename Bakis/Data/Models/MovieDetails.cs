@@ -7,5 +7,6 @@
         public string backdrop_path { get; set; }
         public string poster_path { get; set; }
         public string release_date { get; set; }
+        public string average_count { get; set; }
     }
 }

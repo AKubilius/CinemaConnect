@@ -11,7 +11,10 @@
   }
   
   .message-content {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     max-width: 70%;
     word-wrap: break-word;
     white-space: pre-wrap;
@@ -21,10 +24,30 @@
   
   .my-message .message-content {
     align-self: flex-end;
-    background-color:red ;/*#d1e7ff*/ 
+    background-color:#d1e7ff ;/**/ 
+    color:black;
   }
   
   .other-message .message-content {
     align-self: flex-start;
-    background-color: green;/* #f1f1f1*/ 
+    background-color: #f1f1f1;/* #f1f1f1*/ 
+    color:black;
+  }
+
+  .my-message .message-content.Accept {
+    align-self: flex-end;
+    background-color:#aaff99 ;/**/ 
+    color:black;
+  }
+  
+  .my-message .message-content.Decline {
+    align-self: flex-end;
+    background-color: #f76565;/* #f1f1f1*/ 
+    color:black;
+  }
+
+  .other-message .message-content .decline {
+    align-self: flex-start;
+    background-color: #f76565;/* #f1f1f1*/ 
+    color:black;
   }

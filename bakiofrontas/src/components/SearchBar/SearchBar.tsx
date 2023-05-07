@@ -30,7 +30,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResults }) => {
 
     try {
       const response = await axios.get(
-        `https://api.themoviedb.org/3/search/movie?api_key=c9154564bc2ba422e5e0dede6af7f89b&query=${searchTerm}`
+        `https://api.themoviedb.org/3/search/movie?api_key=c9154564bc2ba422e5e0dede6af7f89b&language=lt-LT&query=${searchTerm}`
       );
       onResults(response.data.results);
     } catch (error) {
@@ -44,8 +44,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResults }) => {
   };
 
   return (
-    <div>
+    <div style={{margin:10}}>
       <TextField
+
         label="Ieškoti filmų"
         value={query}
         onChange={handleChange}

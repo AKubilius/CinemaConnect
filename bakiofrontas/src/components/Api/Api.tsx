@@ -49,6 +49,25 @@ async function makePostRequest(url: string, postData: any) {
   }
 }
 
+async function makePutRequest(url: string, postData: any) {
+  const authorizationToken = `Bearer ${sessionStorage.getItem("token")}`;
+
+  try {
+    const { data /*status*/ } = await axios.put<any>(url, postData, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: authorizationToken,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    await handleError(error);
+  }
+}
+
+
 async function makeDeleteRequest(url: string) {
   const authorizationToken = `Bearer ${sessionStorage.getItem("token")}`;
 
@@ -85,4 +104,5 @@ export const logout = () => {
 };
 
 
-export { api, authConfig, makePostRequest, makeDeleteRequest,getRequest};
+export { api, authConfig, makePostRequest, makeDeleteRequest,getRequest,makePutRequest};
+

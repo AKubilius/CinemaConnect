@@ -6,10 +6,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import axios from "axios";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import ReplyIcon from '@mui/icons-material/Reply';
 import Box from "@mui/material/Box/Box";
 import TextField from "@mui/material/TextField/TextField";
-
+import DatePicker from '../Callendar/DatePicker';
+import Modal from '@mui/material/Modal/Modal';
+import Typography from "@mui/material/Typography";
+import dayjs, { Dayjs } from 'dayjs';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -24,26 +27,15 @@ const style = {
 };
 
 const SendToFriend = (info: any) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [selectedDate, setSelectedDate] = React.useState<Dayjs | null>(dayjs('2023-05-10T15:30'));    
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const shareMovieInfo = () => {
-    // Handle sharing the movie info here
-    console.log("Movie info shared");
-    handleClose();
-  };
   const userName = `${sessionStorage.getItem("name")}`;
   const token = `Bearer ${sessionStorage.getItem("token")}`;
   const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
-  const [roomId, setRoomId] = useState<string | null>(null);
-  const [movieInfo, setMovieInfo] = useState<string | null>(null);
+
 
   useEffect(() => {
     const newConnection = new signalR.HubConnectionBuilder()
@@ -75,7 +67,7 @@ const SendToFriend = (info: any) => {
 
         if (connection && connection.state === signalR.HubConnectionState.Connected) {
          
-          await connection.send("SendRequestToRoom", roomId.toString(), userName, `${info.movieId}`, true, userId, new Date());
+          await connection.send("SendRequestToRoom", roomId.toString(), userName, `${info.movieId}`, true, userId, selectedDate);
         }
       } else {
         console.log("No common room found between the users.");
@@ -85,35 +77,49 @@ const SendToFriend = (info: any) => {
     }}
   };
 
+  const handleDateChange = (date: Dayjs | null) => {
+    setSelectedDate(date);
+  };
+
   return (
     <div>
-      {/* Your movie description content here */}
+    <Button
+      sx={{
+        borderRadius: 5,
+        margin: 1,
+      }}
+      startIcon={<ReplyIcon />}
+      onClick={handleOpen}
+    >
+     Siūlyti
+    </Button>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Siūlyti žiūrėti
+        </Typography>
+        <DatePicker onDateChange={handleDateChange} />
+       
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+        <Box
+                            component="img"
+                            sx={{
+                                marginTop:1,
+                                marginBottom:1,
+                                borderRadius: 2,
+                                height: '90%',
+                                width: 1,
+                            }}
+                            alt="Movie"
+                            src={`https://image.tmdb.org/t/p/original${info.imgUrl}`}
+                        />
 
-      <Button
-        sx={{
-          borderRadius: 5,
-          margin: 1,
-        }}
-        startIcon={<AddCircleIcon />}
-        onClick={handleOpen}
-        variant="text"
-      >
-        Pasidalinti
-      </Button>
-      <Dialog open={open} onClose={handleClose} >
-        <DialogTitle>Share Movie</DialogTitle>
-        <DialogContent >
-          <TextField
-            fullWidth
-            id="outlined-multiline-static"
-            label="Kometaras"
-            multiline
-            rows={4}
-            sx={{
-              marginTop: 2,
-            }}
-          />
-          {info.friends?.map(
+        {info.friends?.map(
             (user: any | null, index: React.Key | null | undefined) => (
               <Box sx={{
                 display: 'flex',
@@ -122,18 +128,14 @@ const SendToFriend = (info: any) => {
                 justifyContent: 'space-between'
               }}>
                 <p style={{ margin: 0 }}>{user.userName}</p>
-                <Button onClick={() => sendMovieInfo(user.id)}> Siusti</Button>
+                <Button variant="contained" onClick={() => sendMovieInfo(user.id)}> Siusti</Button>
               </Box>
-
             )
           )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={shareMovieInfo}>Share</Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+        </Box>
+      </Box>
+    </Modal>
+  </div>
   );
 };
 

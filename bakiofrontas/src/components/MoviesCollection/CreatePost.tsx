@@ -8,6 +8,7 @@ import TextField from "@mui/material/TextField";
 import Rating from "@mui/material/Rating/Rating";
 import axios from "axios";
 import { useState } from "react";
+import ShareIcon from '@mui/icons-material/Share';
 
 const style = {
   position: "absolute" as "absolute",
@@ -33,9 +34,7 @@ export default function BasicModal(movie: any) {
     setOpen(false);
     CreatePost();
   };
-
   const token = `Bearer ${sessionStorage.getItem("token")}`;
-  
   const handleCommentChange = (event: { target: { value: any; }; }) => {
     setComment(event.target.value);
   };
@@ -78,10 +77,10 @@ export default function BasicModal(movie: any) {
           borderRadius: 5,
           margin: 1,
         }}
-        startIcon={<AddCircleIcon />}
+        startIcon={<ShareIcon />}
         onClick={handleOpen}
       >
-        Skelbti
+        Dalintis
       </Button>
       <Modal
         open={open}
@@ -97,27 +96,29 @@ export default function BasicModal(movie: any) {
             <TextField
               fullWidth
               id="outlined-multiline-static"
-              label="Kometaras"
+              label="Ką galvojate apie filmą?"
               multiline
-              rows={4}
+              rows={3}
               onChange={handleCommentChange}
               sx={{
                 marginTop: 2,
               }}
             />
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Rating
-                sx={{
-                  marginLeft: 1,
-                }}
-                name="simple-controlled"
-                value={value}
-                onChange={(event, newValue) => {
-                  setValue(newValue);
-                }}
-              />
+             <Box
+                            component="img"
+                            sx={{
+                                marginTop:1,
+                                marginBottom:1,
+                                borderRadius: 2,
+                                height: '90%',
+                                width: 1,
+                            }}
+                            alt="Movie"
+                            src={`https://image.tmdb.org/t/p/original${movie.imgUrl}`}
+                        />
+            
               <Button onClick={HandleSubmit}>Dalintis</Button>
-            </Box>
+           
           </Box>
         </Box>
       </Modal>

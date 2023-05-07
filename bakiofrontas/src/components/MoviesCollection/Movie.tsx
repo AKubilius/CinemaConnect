@@ -10,6 +10,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import SendToFriend from './SendToFriend';
 
+
 interface IPost {
     id: any;
     poster_path: any;
@@ -17,6 +18,7 @@ interface IPost {
     title: any;
     backdrop_path: any;
     friends: any[] | null;
+    rating:any;
 }
 
 const Movie: React.FC<IPost> = ({
@@ -25,12 +27,25 @@ const Movie: React.FC<IPost> = ({
     backdrop_path,
     createdDate,
     title,
-    friends
+    friends,
+    rating,
+
 
 }) => {
+    const [currentMovieDetail, setMovie] = useState<any>([]);
+
+    useEffect(() => {
+        getData()
+        window.scrollTo(0,0)
+    }, [])
+    const getData = () => {
+        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=c9154564bc2ba422e5e0dede6af7f89b&language=lt-LT`)
+        .then(res => res.json())
+        .then(data => setMovie(data))
+    }
     return (
         <div className='collection'>
-            <Box>
+            <Box >
                 <Box sx={{ display: 'flex', borderRadius: 2, width: '100%', border: 1 }}>
                     <div className='movies'>
                         <Box
@@ -44,12 +59,44 @@ const Movie: React.FC<IPost> = ({
                             alt="Movie"
                             src={`https://image.tmdb.org/t/p/original${poster_path}`}
                         />
-                        <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, width: '100%', marginTop: 1 }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', borderRadius: 2, width: '100%',  marginTop: 1, height:198, justifyContent:'space-between' }}> 
+                        
+                        <Box sx={{
+                            display:'flex',
+                            flexDirection:'row',
+                            justifyContent:'space-between'
+                        }}>
+                            <Box>
                             <Link href={`/movie/${id}`}>{title}</Link>
-                            <Box sx={{ borderRadius: 2, marginBottom: 0, display: 'flex', flexDirection: 'flex', alignItems: 'end', justifyContent: 'left', marginTop: 15 }}>
-                               
-                               {
-                            friends ? <div style={{display:'flex'}}>
+                            <h4>{createdDate.slice(0, -6)}</h4>
+                            </Box>
+                        
+                        
+                        <h3 style={{
+                            marginTop:0,
+                            marginRight:20
+                        }}>{rating}</h3>
+                        </Box>
+                            
+                            
+                            <Box sx={{
+                                display:'flex',
+                                flexDirection:'column',
+                                justifyContent:'space-between'
+                            }}>
+
+                            
+                            <div className="genres">
+                            {
+                                currentMovieDetail && currentMovieDetail.genres
+                                ? 
+                                currentMovieDetail.genres.map((genre: { id: string | undefined; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => (
+                                    <><span className="genre" id={genre.id}>{genre.name}</span></>
+                                )) 
+                                :  ""}
+                        </div>
+                            <Box sx={{ borderRadius: 2, marginBottom: 0, display: 'flex', flexDirection: 'flex', alignItems: 'end', justifyContent: 'left'}}>
+                                {friends ? <div style={{display:'flex'}}>
                             <SendToFriend
                                 friends={friends}
                                 movieId={id}
@@ -63,7 +110,7 @@ const Movie: React.FC<IPost> = ({
                             />
                             </div> : ''
                                }
-                               
+                               </Box>
                             </Box>
                         </Box>
                     </div>

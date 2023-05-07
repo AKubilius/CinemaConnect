@@ -4,6 +4,7 @@
     display: flex;
     flex-direction:column;
     align-items: center;
+    background-color: #121212;
 }
 
 .movie__intro {
@@ -72,7 +73,7 @@
 .movie__detailRightBottom {
     margin: 2rem 0;
     flex: 0.8;
-    color:#000000;
+    color: white;
     
 }
 
@@ -80,10 +81,11 @@
     font-size: 1.5rem;
     margin-bottom: 1.25rem;
     font-weight: 600;
-    color: #000000;
+   color: white;
     display: flex;
     position: relative;
     align-items: center;
+    justify-content: space-between;
 
 }
 .synopsisText > div:last-of-type {
@@ -94,12 +96,17 @@
     position: relative;
     bottom: 120px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: end;
+    align-items: end;
+
     width: 75%;
 }
 
 .movie__heading {
     font-size: 2.2rem;
+    color: white;
+
 }
 
 .movie__Button {
@@ -123,6 +130,10 @@
     background-color:#f3ce13;
 }
 
+.movie__addButton {
+    background-color:white;
+}
+
 .newTab {
     margin-left: 1.4rem;
 }
@@ -133,12 +144,14 @@
     justify-content: center;
     align-items: flex-end;
     margin-bottom: 4rem;
+    color: white;
 }
 
 
 .movie__productionComapany {
     width: 200px;
     margin: 2rem;
+    color: white;
 }
 
 .productionCompanyImage {
@@ -146,4 +159,5 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    color: white;
 }

@@ -56,14 +56,12 @@ namespace Bakis.Controllers
         [Authorize(Roles = Roles.User)]
         public async Task<ActionResult> GetRoomId(string id)
         {
-            // Fetch rooms for both users
+
             var userRooms = _databaseContext.UserRooms.Where(ur => ur.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).Select(ur => ur.RoomId).ToList();
             var friendRooms = _databaseContext.UserRooms.Where(ur => ur.UserId == id).Select(ur => ur.RoomId).ToList();
 
-            // Find the common room
             var commonRoomId = userRooms.Intersect(friendRooms).FirstOrDefault();
 
-            // If commonRoomId is 0, then there's no common room between the two users
             if (commonRoomId == 0)
             {
                 return null;

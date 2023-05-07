@@ -20,7 +20,6 @@ namespace Bakis.Controllers
         public FriendController(ApplicationDbContext context, IAuthorizationService authorizationService)
         {
             _databaseContext = context;
-
             _authorizationService = authorizationService;
         }
 
@@ -71,8 +70,5 @@ namespace Bakis.Controllers
             await _databaseContext.SaveChangesAsync();
             return Ok(List);
         }
-
-
-
     }
 }

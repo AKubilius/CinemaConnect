@@ -71,8 +71,10 @@ export default function Collection() {
           backdrop_path={movie.backdrop_path}
           title={movie.title}
           createdDate={movie.release_date}
-          key={index}
+          
           friends={null}
+          rating = {null}
+          key={index}
         />
       ))}
     </div>

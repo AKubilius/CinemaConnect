@@ -20,7 +20,6 @@ namespace Bakis.Controllers
         public FriendRequestController(ApplicationDbContext context, IAuthorizationService authorizationService)
         {
             _databaseContext = context;
-
             _authorizationService = authorizationService;
         }
         
@@ -40,7 +39,6 @@ namespace Bakis.Controllers
                 return NotFound("User has no friend requests");
             return Ok(Requests);
         }
-
 
         [HttpGet("/users")]
         [Authorize(Roles = Roles.User)]
@@ -126,7 +124,6 @@ namespace Bakis.Controllers
             a.UserId = List.InvitedBy;
             _databaseContext.Friends.Add(a);
 
-            // Create a new room for the two users// Name isnt important right now/ maybe later?
             Room newRoom = new Room
             {
                 Name = "Room for " + List.FriendId + " and " + List.InvitedBy
@@ -156,7 +153,6 @@ namespace Bakis.Controllers
             await _databaseContext.SaveChangesAsync();
             return Ok(List);
         }
-
 
         [HttpDelete("delete/{id}")]
         [Authorize(Roles = Roles.User + "," + Roles.Admin)]
