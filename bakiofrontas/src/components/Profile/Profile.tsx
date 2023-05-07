@@ -120,7 +120,7 @@ console.log(window.location.href)
     <div className='userInfo'>
 
 {currentUser ? (
-      <Box sx={{ display: 'flex', borderRadius: 2, marginBottom: 15, boxShadow: '0 4px 6px lightgrey' }}>
+      <Box sx={{ display: 'flex', borderRadius: 5, marginBottom: 15, border: 'solid' }}>
         <Avatar src={`data:image/jpeg;base64,${currentUser.profileImageBase64}`} sx={{ margin: 5, height: 100, width: 100 }} variant="rounded" />
         <Box>
         <p style={{ fontSize: 25 }}>{currentUser.userName}</p>

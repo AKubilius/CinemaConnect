@@ -1,45 +1,47 @@
-import React from 'react'
-import {useEffect, useState} from 'react'
-import axios,{ AxiosRequestConfig } from 'axios'
-import Grid from '@mui/material/Grid/Grid';
-import Friend from './Friend';
-import Box from '@mui/material/Box/Box';
+import React from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Friend from "./Friend";
 
 const AddFriends = () => {
-    const[friends,setFriends] = useState<any>([]);
-    const token = `Bearer ${sessionStorage.getItem("token")}`
-    const fetch = async () =>{
-        
-        const {data} = await axios.get(`https://localhost:7019/user/friends`,
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-                Authorization: token
-              },
-        })
-        setFriends(data)
-        console.log(data)
-
-    }
-    useEffect(()=>{
-        fetch()
-    }, [])
+  const [friends, setFriends] = useState<any>([]);
+  const token = `Bearer ${sessionStorage.getItem("token")}`;
+  const fetch = async () => {
+    const { data } = await axios.get(`https://localhost:7019/user/friends`, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: token,
+      },
+    });
+    setFriends(data);
+    console.log(data);
+  };
+  useEffect(() => {
+    fetch();
+  }, []);
 
   return (
-    <div>Gali pridėt draugą, kad gautum rekomendacijas, kurie patiktų jum abiem
-{friends?.map((user: any, index: React.Key | null | undefined) => (
-                <Friend
-                    username={user.userName}
-                    name={user.name}
-                    surname={user.surname}
-                    image64={user.profileImageBase64}
-                    id ={user.id}
-                />
-            ))}
-            </div>
-    
-  )
-}
+    <div>
+      <h3 style={{ textAlign: "center" }}>Pasirinkite draugą</h3>
+      {friends && friends.length > 0 ? (
+        friends.map((user: any, index: number) => (
+          <>
+            <Friend
+              username={user.userName}
+              name={user.name}
+              surname={user.surname}
+              image64={user.profileImageBase64}
+              id={user.id}
+              index={index}
+            />
+          </>
+        ))
+      ) : (
+        <h3 style={{ textAlign: "center" }}>Jūs neturite draugų</h3>
+      )}
+    </div>
+  );
+};
 
-export default AddFriends
+export default AddFriends;
