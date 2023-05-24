@@ -6,6 +6,8 @@ import { Link as RouterLink , useParams  } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 import axios from 'axios'
+import ImageUpload from '../Form/UploadImageForm';
+import ImageForm from '../Form/ImageForm';
 
 const style = {
   display: 'flex',
@@ -77,7 +79,6 @@ export const Profile = () => {
           },
         })
       setCurrentUser(data);
-      console.log(data)
     }
 
     catch (error) {
@@ -95,7 +96,6 @@ export const Profile = () => {
           },
         })
       setCurrentUser(data);
-      console.log(data)
     }
 
     catch (error) {
@@ -115,24 +115,37 @@ export const Profile = () => {
     }
   };
 
-console.log(window.location.href)
+
   return (
     <div className='userInfo'>
+      {progress === 0 && (<ImageForm/>)}
+      
 
 {currentUser ? (
-      <Box sx={{ display: 'flex', borderRadius: 5, marginBottom: 15, border: 'solid' }}>
-        <Avatar src={`data:image/jpeg;base64,${currentUser.profileImageBase64}`} sx={{ margin: 5, height: 100, width: 100 }} variant="rounded" />
-        <Box>
-        <p style={{ fontSize: 25 }}>{currentUser.userName}</p>
+      <Box sx={{ display: 'flex', borderRadius: 5, marginBottom: 15, border: 'solid', justifyContent:'flex-start' }}>
+        <Avatar src={`data:image/jpeg;base64,${currentUser.profileImageBase64}`} sx={{ marginBottom: 5,marginTop: 5,marginLeft: 5,marginRight:1, height: 100, width: 100 }} variant="rounded" />
+        <Box sx={{
+          display:'flex',
+          flexDirection:'column',
+          justifyContent:'center'
+        }}>
+        <Box >
+        <p style={{ fontSize: 25,marginBottom:0 }}>{currentUser.userName}</p>
+        </Box>
+        <p style={{ fontSize: 15 }}>{currentUser.name} {currentUser.surname}</p>
+      </Box>
         </Box>
         
-        <p style={{ fontSize: 20 }}>{currentUser.name}</p>
-      </Box>
  ) : (
   <div>Loading...</div>
-)}
+)} 
       {progress !== 0 && (
+        
         <div>
+          <h4 style={{
+  display:'flex',
+  justifyContent:'center'
+}}>Suderinamumo įvertis</h4>
           <LinearProgress
             variant="determinate"
             value={progress}

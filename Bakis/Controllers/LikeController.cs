@@ -51,31 +51,24 @@ namespace Bakis.Controllers
             if (List == null)
                 return NotFound();
 
-            //var Likes = await _databaseContext.Likes.ToListAsync();
-            //_databaseContext.Likes.RemoveRange(Likes);
-            //await _databaseContext.SaveChangesAsync();
-
             var UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             var PostLike = _databaseContext.Likes.SingleOrDefault(e => e.UserId == UserId && e.PostId == id);
 
             if (PostLike == null)
                 return Ok(false);
-
-
             return Ok(true);
         }
 
 
         [HttpPost]
         [Authorize(Roles = Roles.User + "," + Roles.Admin)]
-        public async Task<ActionResult<List<Like>>> LikePost(Like Like) //STRINGAS ID MOVIE???? perdaryk
+        public async Task<ActionResult<List<Like>>> LikePost(Like Like) 
         {
             Like.UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-
             _databaseContext.Likes.Add(Like);
             await _databaseContext.SaveChangesAsync();
-            return Ok(await _databaseContext.Lists.ToListAsync());
+            return Ok(await _databaseContext.Likes.ToListAsync());
         }
 
         [HttpDelete("{id}")]
@@ -83,20 +76,11 @@ namespace Bakis.Controllers
         public async Task<ActionResult<List<Like>>> UnlikePost(int id)
         {
             var _User = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-
-            var PostLike = _databaseContext.Likes.SingleOrDefault(e => e.UserId == _User && e.PostId == id);// cia same apdaryt ka ten dariau
-
-
-            //var authResult = await _authorizationService.AuthorizeAsync(User, List, PolicyNames.ResourceOwner);
-            //if (!authResult.Succeeded)
-            //{
-            //    return NoContent();
-            //}
-
+            var PostLike = _databaseContext.Likes.SingleOrDefault(e => e.UserId == _User && e.PostId == id);
             _databaseContext.Likes.Remove(PostLike);
             await _databaseContext.SaveChangesAsync();
 
-            return Ok("Deleted");
+            return Ok();
         }
     }
 }

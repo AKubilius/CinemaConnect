@@ -12,18 +12,18 @@ const CustomTextField = styled(TextField)({
   borderColor: 'black',
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      borderColor: 'black', // Change border color here
+      borderColor: 'black', 
     },
     '&:hover fieldset': {
-      borderColor: '#121212', // Change border color on hover here
+      borderColor: '#121212', 
     }
     
   },
    '&.MuiOutlinedInput-notchedOutline': {
-    borderColor: 'red', // Change default border color when mouse leaves
+    borderColor: 'red', 
   },
   '& .MuiInputBase-input': {
-    color: 'black', // Change text color here
+    color: 'black', 
   },
 });
 

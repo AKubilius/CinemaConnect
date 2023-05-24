@@ -22,6 +22,7 @@ interface Challenges
 {
   name:string;
   count:number;
+  id:number;
 }
 interface userChallenge {
   progress:number;
@@ -43,7 +44,7 @@ interface UserChallengeProps {
 
   return (
     <div style={{display:'flex',justifyContent:'end'}}>
-      <Button onClick={handleOpen}>Visi iššūkiai</Button>
+      <Button onClick={handleOpen}>Naudotojo iššūkiai</Button>
       <Modal
         open={open}
         onClose={handleClose}
@@ -67,14 +68,6 @@ interface UserChallengeProps {
     <Challenge userChallenge={challenge} />
   ))}
           </Typography>
-          <Button 
-
-              startIcon={<AddCircleIcon />} 
-              variant="text"
-              color={'primary'} 
-            >
-              {"Pridėti" }
-            </Button>
         </Box>
       </Modal>
     </div>

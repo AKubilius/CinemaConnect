@@ -35,7 +35,7 @@ export default function ResetPasswordNewCurrentPasswordSide() {
         NewPassword: newPassword,
       }),
     });
-  
+
     if (response.ok) {
       const message = await response.text();
       console.log(message);
@@ -105,7 +105,7 @@ export default function ResetPasswordNewCurrentPasswordSide() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
-                        
+
             {isPaswordChangedSuccessfully && (
               <Alert severity='success'>{SUCCESS_MESSAGE}</Alert>
             )}

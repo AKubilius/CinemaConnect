@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import Loading from './Loading';
 import { logout } from '../Api/Api';
 import Button from '@mui/material/Button/Button';
+import axios from 'axios';
 
 function a11yProps(index: number) {
   return {
@@ -30,43 +31,56 @@ export default function BasicTabs() {
   const [loading, setLoading] = useState(false);
   const location = useLocation();
 
+  const [image,setImage] = useState<any>([]);
+
+  const token = `Bearer ${sessionStorage.getItem("token")}`
+  const getUserImage = async () => {
+    const { data } = await axios.get(`https://localhost:7019/User/currentImage`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        },
+      })
+    setImage(data)
+  }
+  useEffect(() => {
+    getUserImage()
+  }, [])
+
+
   const logged = sessionStorage.getItem("token");
 
   const [value, setValue] = useState(() => {
-    switch (location.pathname) {
-      case '/home':
-        return 0;
-      case '/movies':
-        return 1;
-      case '/chat':
-        return 2;
-      case '/recommendations':
-        return 3;
-      default:
-        return 0;
+    if (location.pathname.startsWith('/home')) {
+      return 0;
+    } else if (location.pathname.startsWith('/movie')) {
+      return 1;
+    } else if (location.pathname.startsWith('/chat')) {
+      return 2;
+    } else if (location.pathname.startsWith('/recommendations')) {
+      return 3;
+    } else {
+      return 0;
     }
   });
 
+
   useEffect(() => {
-    switch (location.pathname) {
-      case '/home':
-        setValue(0);
-        break;
-      case '/movies':
-        setValue(1);
-        break;
-      case '/chat':
-        setValue(2);
-        break;
-      case '/recommendations':
-        setValue(3);
-        break;
-      default:
-        setValue(0);
-        break;
+    if (location.pathname.startsWith('/home')) {
+      setValue(0);
+    } else if (location.pathname.startsWith('/movie')) {
+      setValue(1);
+    } else if (location.pathname.startsWith('/chat')) {
+      setValue(2);
+    } else if (location.pathname.startsWith('/recommendations')) {
+      setValue(3);
+    } else {
+      setValue(0);
     }
   }, [location.pathname]);
-
+ 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -109,7 +123,7 @@ export default function BasicTabs() {
                 <NavBarRequests />
                 <NavBarNotifications />
                 <Link to="/profile" component={RouterLink}>
-                <Avatar src={`data:image/jpeg;base64,${sessionStorage.getItem("image")}`} ></Avatar>
+                <Avatar src={`data:image/jpeg;base64,${image}`} ></Avatar>
                 </Link>
                 <Button onClick={handleLogout}>
       Atsijungti

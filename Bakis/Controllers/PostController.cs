@@ -60,10 +60,6 @@ namespace Bakis.Controllers
             if (allList.Count == 0)
                 return BadRequest("User has nothing in list");
 
-            //var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
-            //if (List.Count == 0)
-            //    return BadRequest("User has nothing in list");
-
             return Ok(items);
         }
 
@@ -87,7 +83,7 @@ namespace Bakis.Controllers
    .Where(post => post.UserId == user.Id)
    .ToListAsync();
             allList.Reverse();
-            // var allList = await _databaseContext.Posts.ToListAsync();
+           
 
             var totalItems = allList.Count();
 
@@ -108,16 +104,14 @@ namespace Bakis.Controllers
             if (allList.Count == 0)
                 return BadRequest("User has nothing in list");
 
-            //var List = allList.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
-            //if (List.Count == 0)
-            //    return BadRequest("User has nothing in list");
+           
 
             return Ok(items);
         }
 
         [HttpGet("total")]
         [Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<Post>>> GetPostsCount()
+        public async Task<ActionResult<int>> GetPostsCount()
         {
             var allList = await _databaseContext.Posts.ToListAsync();
             var totalItems = allList.Count();
@@ -143,8 +137,6 @@ namespace Bakis.Controllers
             if (List == null)
                 return BadRequest("List not found");
 
-            //_databaseContext.FriendRequests.RemoveRange(allList);
-            //await _databaseContext.SaveChangesAsync();
 
             var authResult = await _authorizationService.AuthorizeAsync(User, List, PolicyNames.ResourceOwner);
             if (!authResult.Succeeded)

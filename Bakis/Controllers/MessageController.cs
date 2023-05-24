@@ -44,7 +44,6 @@ namespace Bakis.Controllers
             {
                 Id = m.Sender.Id,
                 UserName = m.Sender.UserName
-                //Nuotrauka dar bus
             }
         })
         .ToListAsync();
@@ -61,19 +60,7 @@ namespace Bakis.Controllers
             var friendRooms = _databaseContext.UserRooms.Where(ur => ur.UserId == id).Select(ur => ur.RoomId).ToList();
 
             var commonRoomId = userRooms.Intersect(friendRooms).FirstOrDefault();
-
-            if (commonRoomId == 0)
-            {
-                return null;
-            }
             return Ok(commonRoomId);
         }
-
-
-        //    var messages = await _databaseContext.Messages
-        //.Where(m => m.RoomId == roomId)
-        //.OrderByDescending(m => m.DateTime)
-        //.Take(50)
-        //.ToListAsync();
     }
 }

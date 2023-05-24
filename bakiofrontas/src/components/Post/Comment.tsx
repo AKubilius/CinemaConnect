@@ -21,7 +21,6 @@ const Comments: React.FC<Comment> = ({
   user
 }) => {
 
-  console.log(user)
   return (
     <Box sx={{ display: 'flex', }}>
        <Box

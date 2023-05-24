@@ -26,15 +26,13 @@ namespace Bakis.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<FriendRequest>>> GetUserRequests() //Tikrinam kas jį pakvietę,ir visus userius, kurie pakvietę grąžinam.
+        public async Task<ActionResult<List<FriendRequest>>> GetUserRequests() 
         {
             var allList = await _databaseContext.FriendRequests.ToListAsync();
             if (allList.Count == 0)
                 return NotFound("There are no friend requests");
 
             var Requests = allList.Where(s => s.FriendId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
-            //_databaseContext.FriendRequests.RemoveRange(allList);
-            //await _databaseContext.SaveChangesAsync();
             if (Requests.Count == 0)
                 return NotFound("User has no friend requests");
             return Ok(Requests);
@@ -100,19 +98,13 @@ namespace Bakis.Controllers
             if (List == null)
                 return BadRequest("Request not found");
 
-            //var authResult = await _authorizationService.AuthorizeAsync(User, List, PolicyNames.ResourceOwner);
-            //if (!authResult.Succeeded)
-            //{
-            //    return BadRequest("No permissions");
-            //}
-
             _databaseContext.FriendRequests.Remove(List);
             await _databaseContext.SaveChangesAsync();
             return Ok("Request canceled");
         }
 
         [HttpPost("accept/{id}")]
-       // [Authorize(Roles = Roles.User + "," + Roles.Admin)]
+        [Authorize(Roles = Roles.User + "," + Roles.Admin)]
         public async Task<ActionResult<List<FriendRequest>>> AcceptRequest(int id)
         {
             var List = await _databaseContext.FriendRequests.FindAsync(id);
@@ -142,9 +134,6 @@ namespace Bakis.Controllers
                 UserId = List.InvitedBy,
                 RoomId = newRoom.Id
             };
-            //Prie friends turėčiau įdėt, gal prie FriendsRequest ten kažkur
-            //    _context.Rooms.Add(newRoom);
-            //await _context.SaveChangesAsync();
 
             _databaseContext.UserRooms.Add(userRoom1);
             _databaseContext.UserRooms.Add(userRoom2);
@@ -160,7 +149,7 @@ namespace Bakis.Controllers
         {
             var List = await _databaseContext.FriendRequests.FindAsync(id);
             if (List == null)
-                return BadRequest("List not found");
+                return NoContent();
             _databaseContext.FriendRequests.Remove(List);
             await _databaseContext.SaveChangesAsync();
             return Ok(List);

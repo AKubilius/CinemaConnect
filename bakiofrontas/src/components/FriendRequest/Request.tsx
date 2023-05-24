@@ -6,17 +6,14 @@ import IconButton from '@mui/material/IconButton/IconButton';
 import Typography from '@mui/material/Typography/Typography';
 import axios from 'axios';
 
-interface Request {
-  username: any;
-  id: any;
+interface RequestProps {
+  username: string;
+  id: number;
+  handleClose: () => void;
 }
 
 
-const Request: React.FC<Request> = ({
-  username,
-  id
-}) => {
-
+const Request: React.FC<RequestProps> = ({ username, id, handleClose }) => {
 
   const token = `Bearer ${sessionStorage.getItem("token")}`
 
@@ -74,7 +71,7 @@ const Request: React.FC<Request> = ({
       }
     }
   }
-console.log(id)
+//Request class
   return (
     <div>
       <Box sx={{ bgcolor: 'lightgrey', display: 'flex', borderRadius: 1, boxShadow: '0 4px 6px grey', width: '25vh', justifyContent: 'space-between', alignContent: 'center' }}>
@@ -84,12 +81,13 @@ console.log(id)
           <Typography>{username}</Typography>
         </Box>
         <Box sx={{ margin: 1 }}>
-          <IconButton onClick={() => handleClickAccept({ id })}  >
+          <IconButton onClick={() => {handleClose();
+          handleClickAccept({ id })}}  >
             <CheckIcon sx={{
               color: 'green'
             }} />
           </IconButton>
-          <IconButton onClick={() => handleClickDecline({ id })}
+          <IconButton onClick={() => {handleClose();handleClickDecline({ id })}}
             sx={{
             }} >
             <DoDisturbIcon sx={{

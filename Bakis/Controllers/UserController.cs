@@ -28,9 +28,9 @@ namespace Bakis.Controllers
             return  await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
         }
 
-        private async Task<string> getCurrentUserId()
+        private string getCurrentUserId()
         {
-            return  User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            return User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         }
 
         private async Task<List<User>> GetCurrentUsersFriends()
@@ -92,9 +92,20 @@ namespace Bakis.Controllers
         }
 
 
+
+        [HttpGet("currentImage")]
+        [Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<User>>> GetCurrentUserImage()
+        {
+            var Users = await getCurrentUser();
+            if (Users == null)
+                return BadRequest("There are no users available");
+            return Ok(Users.ProfileImageBase64);
+        }
+
         [HttpGet("current")]
         [Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<User>>> GetCurrentUser()
+        public async Task<ActionResult<User>> GetCurrentUser()
         {
             var Users = await getCurrentUser();
             if (Users == null)

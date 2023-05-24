@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom';
 import './Chat.css'
 import Box from '@mui/material/Box/Box';
 import { ChatMovie } from './ChatMovie';
+import { getRequest } from '../Api/Api';
+import User from '../Users/User';
 
 interface User{
   userName: string;
@@ -39,7 +41,18 @@ const Chat: React.FC<ChatProps> = ({
 }) => {
   const userName = `${sessionStorage.getItem("name")}`;
   const [messages, setMessages] = useState<Message[]>([]);
+  const [user, setUser] = useState([]);
   
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getRequest('https://localhost:7019/User/current', '' );
+      setUser(data.userName);
+      
+    };
+    fetchData();
+    
+  }, []);
 
   useEffect(() => {
     const newConnection = new signalR.HubConnectionBuilder()
@@ -74,9 +87,7 @@ const joinRoom = async (roomIdToJoin: string) => {
   if (connection && connection.state === signalR.HubConnectionState.Connected) {
     await connection.send('JoinUserRooms', roomIdToJoin);
     
-    // Fetch messages after joining the room
-    const fetchedMessages = await connection.invoke('LoadMessages', roomIdToJoin);
-    setMessages(fetchedMessages);
+
   }
 };
 useEffect(() => {
@@ -125,8 +136,9 @@ useEffect(() => {
 }, [messages]);
 
 if (!roomID) {
-  return <h4 style={{display:'flex', justifyContent:'center',color:'black'}}>Pasirinkite vartotoją</h4>; // Or return a blank div: <div></div>
+  return <h4 style={{display:'flex', justifyContent:'center',color:'black'}}>Pasirinkite vartotoją</h4>;
 }
+
 
 return (
   <Box 
@@ -143,6 +155,8 @@ return (
         Url={message.movie?.posterUrl}
         watchingDate={message.dateTime}
         id={message.id}
+        sender={message.sender.userName}
+        username ={user}
         />
     
     ) : (

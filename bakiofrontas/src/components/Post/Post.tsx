@@ -38,6 +38,7 @@ const Post: React.FC<IPost> = ({
   const [inList, setInList] = useState(false);
   const [likes, setLikes] = useState(0);
   const [comments,setComments] = useState<any>([]);
+  const [image,setImage] = useState<any>([]);
 
   const token = `Bearer ${sessionStorage.getItem("token")}`
 
@@ -75,9 +76,6 @@ const Post: React.FC<IPost> = ({
 
   async function commentPost(body: string) {
     const { data, status } = await makePostRequest('https://localhost:7019/api/Comment', { Body: body, postId: id });
-    
-    //setCreatedId(JSON.stringify(data, null, 4));
-
     return data;
   }
 
@@ -92,12 +90,27 @@ const Post: React.FC<IPost> = ({
         },
       })
     setComments(data)
-
-
   }
   useEffect(() => {
     fetchComments()
   }, [])
+
+
+  const getUserImage = async () => {
+    const { data } = await axios.get(`https://localhost:7019/User/currentImage`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: token
+        },
+      })
+    setImage(data)
+  }
+  useEffect(() => {
+    getUserImage()
+  }, [])
+
 
   const fetchLikes = async () => {
 
@@ -166,7 +179,6 @@ const Post: React.FC<IPost> = ({
 
   async function createRequest(Id: any) {
     const { data } = await makePostRequest('https://localhost:7019/List/Mylist', { MovieID: `${Id.movieId}` });
-    console.log(data)
     return data;
   }
 
@@ -189,6 +201,7 @@ const Post: React.FC<IPost> = ({
   const deleteButtonSx = {
     ...buttonSx,
   };
+  
 
   return (
     <div className='post'>
@@ -227,7 +240,7 @@ const Post: React.FC<IPost> = ({
             <div style={{display:'grid',alignContent:'center', margin:10}}>
               <Avatar 
                 sx={{ bgcolor: blueGrey[900] }} 
-                src={`data:image/jpeg;base64,${sessionStorage.getItem("image")}`}
+                src={`data:image/jpeg;base64,${image}`}
               />
             </div>
 

@@ -46,8 +46,14 @@
     color:black;
   }
 
-  .other-message .message-content .decline {
+  .other-message .message-content.Decline {
     align-self: flex-start;
     background-color: #f76565;/* #f1f1f1*/ 
+    color:black;
+  }
+
+  .other-message .message-content.Accept {
+    align-self: flex-start;
+    background-color:#aaff99 ;/**/ 
     color:black;
   }

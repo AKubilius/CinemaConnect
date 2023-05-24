@@ -65,7 +65,7 @@ export default function ResetPasswordEmailSide() {
               label='El. Paštas'
               name='email'
             />
-                        
+
             {isEmailSent && (
               <Alert severity='success'>{SUCCESS_MESSAGE}</Alert>
             )}

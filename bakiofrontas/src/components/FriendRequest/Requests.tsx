@@ -5,8 +5,12 @@ import Grid from '@mui/material/Grid/Grid';
 import Request from './Request';
 import Box from '@mui/material/Box/Box';
 
+interface RequestsProps {
+    handleClos: () => void;
+  }
 
-export default function Requests() {
+
+export const Requests : React.FC<RequestsProps> = ({ handleClos }) => {
 
     const [users, setusers] = useState<any>([]);
     const token = `Bearer ${sessionStorage.getItem("token")}`
@@ -28,7 +32,7 @@ export default function Requests() {
         fetch()
     }, [])
 
-
+//Requests
     return (
         <div>
 
@@ -36,6 +40,7 @@ export default function Requests() {
                 <Request
                     username={user.name}
                     id={user.id}
+                    handleClose={handleClos}
                 />))}
         </div>
     )

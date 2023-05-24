@@ -57,8 +57,6 @@ interface UserChallengeProps {
     setFields([...fields, '']);
   };
 
-
-
   return (
     <div style={{display:'flex',justifyContent:'end'}}>
       <Button onClick={handleOpen}>Visi iššūkiai</Button>

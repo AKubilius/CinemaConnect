@@ -1,3 +1,5 @@
+import Button from '@mui/material/Button/Button';
+import Input from '@mui/material/Input/Input';
 import React, { useState } from 'react';
 
 const ImageUpload = () => {
@@ -40,8 +42,8 @@ const ImageUpload = () => {
 
   return (
     <div>
-      <input type="file" onChange={onFileChange} />
-      <button onClick={onFileUpload}>Upload</button>
+       <Input type="file" onChange={onFileChange} />
+      <Button onClick={onFileUpload}>Keisti nuotrauką</Button>
     </div>
   );
 };

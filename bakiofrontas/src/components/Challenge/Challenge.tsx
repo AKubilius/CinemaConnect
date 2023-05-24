@@ -31,9 +31,7 @@ const Challenge: React.FC<ChallengeComponentProps> = ({ userChallenge }) => {
   
   return (
    <>
-    
     <Box>
-      
       <h3 style={style}> {userChallenge.challenge.name}</h3>
           <LinearProgress
             variant="determinate"
@@ -41,9 +39,7 @@ const Challenge: React.FC<ChallengeComponentProps> = ({ userChallenge }) => {
             sx={linearStyle}
           />
           <span style={{ marginLeft: '1rem' }}>{userChallenge.progress} / {userChallenge.challenge.count}</span>
-
     </Box>
-    
     </>
   )
 }

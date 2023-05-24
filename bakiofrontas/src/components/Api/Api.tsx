@@ -35,7 +35,7 @@ async function makePostRequest(url: string, postData: any) {
   const authorizationToken = `Bearer ${sessionStorage.getItem("token")}`;
 
   try {
-    const { data /*status*/ } = await axios.post<any>(url, postData, {
+    const { data } = await axios.post<any>(url, postData, {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -53,7 +53,7 @@ async function makePutRequest(url: string, postData: any) {
   const authorizationToken = `Bearer ${sessionStorage.getItem("token")}`;
 
   try {
-    const { data /*status*/ } = await axios.put<any>(url, postData, {
+    const { data } = await axios.put<any>(url, postData, {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",

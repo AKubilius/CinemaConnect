@@ -112,7 +112,7 @@ namespace Bakis.Hubs
                     FriendId = friendId,
                     CreatedAt = DateTime.UtcNow,
                     WatchingDate = watchDate,
-                    MessageId = newMessage.Id// You may want to set a different date/time for the watching date
+                    MessageId = newMessage.Id
                     
                 };
 
@@ -120,7 +120,7 @@ namespace Bakis.Hubs
             }
             await _context.SaveChangesAsync();
 
-            Debug.WriteLine($"Broadcasting message to group: {roomId}"); // Add this line
+            Debug.WriteLine($"Broadcasting message to group: {roomId}");
             await Clients.Group(roomId).SendAsync("ReceiveMessage", user, message);
         }
 

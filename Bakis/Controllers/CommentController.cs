@@ -52,13 +52,6 @@ namespace Bakis.Controllers
             var List = await _databaseContext.Comments.FindAsync(id);
             if (List == null)
                 return BadRequest("List not found");
-
-            //var authResult = await _authorizationService.AuthorizeAsync(User, List, PolicyNames.ResourceOwner);
-            //if (!authResult.Succeeded)
-            //{
-            //    return BadRequest("No permissions");
-            //}
-
             _databaseContext.Comments.Remove(List);
             await _databaseContext.SaveChangesAsync();
             return Ok(List);
@@ -66,14 +59,14 @@ namespace Bakis.Controllers
 
         [HttpPost]
         [Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<Comment>>> LikePost(Comment comment) //STRINGAS ID MOVIE???? perdaryk
+        public async Task<ActionResult<List<Comment>>> Post(Comment comment) //STRINGAS ID MOVIE???? perdaryk
         {
             comment.UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             comment.User = await _databaseContext.Users.FindAsync(comment.UserId);
 
             _databaseContext.Comments.Add(comment);
             await _databaseContext.SaveChangesAsync();
-            return Ok(await _databaseContext.Lists.ToListAsync());
+            return Ok(await _databaseContext.Comments.ToListAsync());
         }
     }
 }

@@ -15,7 +15,7 @@ interface IUser {
   image64: string;
 }
 
-const User: React.FC<IUser> = ({
+const Friends: React.FC<IUser> = ({
   username,
   name,
   surname,
@@ -23,22 +23,7 @@ const User: React.FC<IUser> = ({
   id
 }) => {
 
-  const [pressed, setPressed] = useState(true);
-
-  const handleClick = (Id: any) => {
-    setPressed(!pressed);
-    pressed ? createRequest(Id) : deleteUser(Id)
-  };
-
-  async function createRequest(Id: any) {
-    return await makePostRequest('https://localhost:7019/FriendRequest', { friendId: Id.id });
-
-  }
-
-  async function deleteUser(Id: any) {
-    return await makeDeleteRequest(`https://localhost:7019/FriendRequest/${Id.id}`);
-  }
-
+ 
   const sx = {
     margin: 2
   };
@@ -55,18 +40,9 @@ const User: React.FC<IUser> = ({
           marginTop: 0
         }}>{name} {surname}</h5>
       </div>
-      <div className='addButton'>
-        <Button
-          onClick={() => handleClick({ id })}
-          sx={sx}
-          color={pressed ? 'primary' : 'secondary'}
-          variant="contained"
-        >
-          {pressed ? <PersonAddAlt1OutlinedIcon /> : <PersonRemoveAlt1Icon />}
-        </Button>
-      </div>
+      
     </div>
   )
 }
 
-export default User
+export default Friends

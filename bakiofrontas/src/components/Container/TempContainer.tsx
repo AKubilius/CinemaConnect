@@ -63,7 +63,7 @@ const SimpleContainer: React.FC = () => {
                       width: 350
                     }}>
                     <aside>
-                      <SearchBar onResults={handleResults} />
+                      <SearchBar  onResults={handleResults}  />
                       <div>
                         {movies.map((movie: any) => (
                           <div key={movie.id}>

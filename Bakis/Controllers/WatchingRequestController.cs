@@ -22,42 +22,39 @@ namespace Bakis.Controllers
             _databaseContext = context;
             _authorizationService = authorizationService;
         }
-
-        private async Task<User> getCurrentUser()
-        {
-            return await _databaseContext.Users.FindAsync(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
-        }
-
-        private string getCurrentUserId()
+        public string getCurrentUserId()
         {
             return User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        }
-
-
-        [HttpGet("{id}")]
-        [Authorize(Roles = Roles.User)]
-        public async Task<ActionResult<List<WatchingRequest>>> GetUserRequest(int id) //Tikrinam kas jį pakvietę,ir visus userius, kurie pakvietę grąžinam.
-        {
-            var watchingRequest = _databaseContext.WatchingRequests.SingleOrDefault(e => e.MessageId == id);
-            return Ok(watchingRequest);
         }
 
         [HttpGet]
         [Authorize(Roles = Roles.User)]
         public async Task<ActionResult<List<WatchingRequest>>> Get()
         {
-            var allList = await _databaseContext.WatchingRequests.ToListAsync();
-            if (allList.Count == 0)
-                return BadRequest("User has nothing in list");
-            var List = allList.Where(s => s.InvitedById == getCurrentUserId()).ToList();//cia ne tiap
-
+            var List = await _databaseContext.WatchingRequests.Where(e => e.FriendId == getCurrentUserId() || e.InvitedById == getCurrentUserId()).ToListAsync(); 
             return Ok(List);
         }
 
+        [HttpGet("chat/{id}")]
+        [Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<WatchingRequest>> GetUserRequest(int id)
+        {
+            var watchingRequest = _databaseContext.WatchingRequests.SingleOrDefault(e => e.MessageId == id);
+            return Ok(watchingRequest);
+        }
+
+        [HttpGet("{username}")]
+        [Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<WatchingRequest>>> GetUserRequest(string username)
+        {
+            var user = await _databaseContext.Users.SingleOrDefaultAsync(u => u.UserName == username);
+            var List =  await _databaseContext.WatchingRequests.Where(e => e.FriendId == user.Id || e.InvitedById == user.Id).ToListAsync();
+            return Ok(List);
+        }
 
         [HttpPut("accept/{id}")]
         [Authorize(Roles = Roles.User + "," + Roles.Admin)]
-        public async Task<ActionResult<List<WatchingRequest>>> AcceptRequest(int id)
+        public async Task<ActionResult<WatchingRequest>> AcceptRequest(int id)
         {
             var watchingRequest =  _databaseContext.WatchingRequests.SingleOrDefault(e => e.MessageId == id);
             watchingRequest.Status = Status.Accepted;
@@ -67,7 +64,7 @@ namespace Bakis.Controllers
 
         [HttpPut("decline/{id}")]
         [Authorize(Roles = Roles.User + "," + Roles.Admin)]
-        public async Task<ActionResult<List<WatchingRequest>>> DeclineRequest(int id)
+        public async Task<ActionResult<WatchingRequest>> DeclineRequest(int id)
         {
             var watchingRequest = _databaseContext.WatchingRequests.SingleOrDefault(e => e.MessageId == id);
             watchingRequest.Status = Status.Declined;

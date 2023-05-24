@@ -24,10 +24,7 @@ export const NavBarNotifications = () => {
         <IconButton aria-describedby={id}  onClick={handleClick} sx={{
         
     }}>
-    <NotificationsIcon sx={{
-        color:'grey',
-        display:'block'          
-      }}/>
+    
 
     </IconButton>
     <Popover

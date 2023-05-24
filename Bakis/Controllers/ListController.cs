@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 
 namespace Bakis.Controllers
@@ -43,7 +44,14 @@ namespace Bakis.Controllers
         {
             return User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         }
+        [HttpGet("Calculate")]
+        //[Authorize(Roles = Roles.User)]
+        public async Task<ActionResult<List<MyList>>> Calculate()
+        {
+            CalculateCompatibilityWithAllUsersAndStore(User.FindFirstValue(JwtRegisteredClaimNames.Sub));
 
+            return Ok();
+        }
 
         [HttpGet("Mylist")]
         [Authorize(Roles = Roles.User)]
@@ -53,24 +61,18 @@ namespace Bakis.Controllers
             if (allList.Count == 0)
                 return BadRequest("User has nothing in list");
             var List = allList.Where(s => s.UserId == getCurrentUserId()).ToList();//cia ne tiap
-
             return Ok(List);
         }
-
 
         [HttpGet("Mylist/{userName}")]
         public async Task<ActionResult<List<MyList>>> GetUserList(string userName)
         {
             var user = await _databaseContext.Users.SingleOrDefaultAsync(u => u.UserName == userName);
-
             var allList = await _databaseContext.Lists.ToListAsync();
             if (allList.Count == 0)
                 return NotFound("There are nothing in Lists database");
 
             var List = allList.Where(s => s.UserId == user.Id).ToList();//cia ne tiap
-
-
-
             return Ok(List);
         }
 
@@ -88,12 +90,12 @@ namespace Bakis.Controllers
 
         public async Task<ActionResult> AddMovieToList(int movieId)
         {
-            // Fetch movie details from TMDB
+
             var movie = await FetchMovieDetails(movieId);
 
             if (movie == null)
             {
-                // Handle the case when the movie details could not be fetched
+
                 return BadRequest("Could not fetch movie details from TMDB.");
             }
 
@@ -103,23 +105,23 @@ namespace Bakis.Controllers
                 return BadRequest("No challenges");
 
             
-            // pazet del ko tas callas neviekia id gaut
+
             var activeUserChallenges = allChallenges.Where(s => s.UserId == User.FindFirstValue(JwtRegisteredClaimNames.Sub)).ToList();
 
             if (activeUserChallenges.Count == 0)
                 return BadRequest("User has no active challenges");
 
-            // Iterate through all active challenges for the user
+            
             foreach (var userChallenge in activeUserChallenges)
             {
-                // Get the corresponding challenge
+
                 var challenge = await _databaseContext.Challenges
                      .Include(c => c.Conditions)
                     .FirstOrDefaultAsync(c => c.Id == userChallenge.ChallengeId);
 
                 if (challenge != null)
                 {
-                    // Check if the movie meets the challenge conditions
+
                     bool allConditionsMet = true;
                     foreach (var condition in challenge.Conditions)
                     {
@@ -132,10 +134,9 @@ namespace Bakis.Controllers
 
                     if (allConditionsMet)
                     {
-                        // Update the user's progress for the challenge
+
                         userChallenge.Progress++;
 
-                        // Check if the challenge is completed
                         if (userChallenge.Progress >= challenge.Count)
                         {
                             userChallenge.Completed = true;
@@ -144,16 +145,15 @@ namespace Bakis.Controllers
                 }
             }
 
-            // Save the updated progress in the database
             await _databaseContext.SaveChangesAsync();
 
             return Ok();
         }
 
-        private async Task<MovieDto> FetchMovieDetails(int movieId)
+        public virtual async Task<MovieDto> FetchMovieDetails(int movieId)
         {
            
-            string url = $"{TmdbApiBase+movieId}?api_key={API_KEY}";
+            string url = $"{TmdbApiBase+movieId}?api_key={API_KEY}&language=lt-LT";
 
             using (HttpClient client = new HttpClient())
             {
@@ -199,8 +199,6 @@ namespace Bakis.Controllers
                     conditionMet = true;
             }
 
-            // Add more conditions here if needed
-
             return conditionMet;
         }
 
@@ -231,41 +229,29 @@ namespace Bakis.Controllers
 
         [HttpGet("isListed/{id}")]
         [Authorize(Roles = Roles.User + "," + Roles.Admin)]
-        public async Task<ActionResult<List<MyList>>> GetIsListedInPosts(int id)
+        public async Task<ActionResult<Boolean>> GetIsListedInPosts(int id)
         {
             var List = await _databaseContext.Posts.FindAsync(id);
             if (List == null)
                 return NotFound();
-            
             var UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-
             var inList = _databaseContext.Lists.SingleOrDefault(e => e.UserId == UserId && e.MovieID == List.MovieId);
-
             if (inList == null)
                 return Ok(false);
-
             return Ok(true);
         }
 
         [HttpGet("listedMovie/{id}")]
         [Authorize(Roles = Roles.User + "," + Roles.Admin)]
-        public async Task<ActionResult<List<MyList>>> GetIsListedInMovies(int id)
+        public async Task<ActionResult<Boolean>> GetIsListedInMovies(int id)
         {
             var UserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-
             var inList = _databaseContext.Lists.SingleOrDefault(e => e.UserId == UserId && e.MovieID == id);
-
             if (inList == null)
                 return Ok(false);
-
             return Ok(true);
         }
 
-
-
-        //var Likes = await _databaseContext.Likes.ToListAsync();
-        //_databaseContext.Likes.RemoveRange(Likes);
-        //await _databaseContext.SaveChangesAsync();
 
         public async Task<List<int>> GetUserMovieIdsAsync(string userId)
         {
@@ -301,6 +287,28 @@ namespace Bakis.Controllers
             // Calculate the Jaccard similarity index
             double similarity = CalculateJaccardSimilarity(user1Criteria, user2Criteria);
             double compatibilityPercentage = similarity * 100;
+
+
+            var existingRecord = await _databaseContext.UserCompatibilities
+               .FirstOrDefaultAsync(uc => (uc.UserId1 == userId1 && uc.UserId2 == userId2) || (uc.UserId1 == userId2 && uc.UserId2 == userId1));
+
+            if (existingRecord != null)
+            {
+                existingRecord.Compatibility = compatibilityPercentage;
+                existingRecord.LastUpdated = DateTime.UtcNow;
+            }
+            else
+            {
+                var newUserCompatibility = new UserCompatibility
+                {
+                    UserId1 = userId1,
+                    UserId2 = userId2,
+                    Compatibility = compatibilityPercentage,
+                    LastUpdated = DateTime.UtcNow
+                };
+                _databaseContext.UserCompatibilities.Add(newUserCompatibility);
+            }
+            await _databaseContext.SaveChangesAsync();
 
             return compatibilityPercentage;
         }
@@ -390,6 +398,99 @@ namespace Bakis.Controllers
             }
 
             return actors;
+        }
+
+        public async Task StoreOrUpdateCompatibilityAsync(string userId1, string userId2, double compatibility)
+        {
+            var existingRecord = await _databaseContext.UserCompatibilities
+                .FirstOrDefaultAsync(uc => (uc.UserId1 == userId1 && uc.UserId2 == userId2) || (uc.UserId1 == userId2 && uc.UserId2 == userId1));
+
+            if (existingRecord != null)
+            {
+                existingRecord.Compatibility = compatibility;
+                existingRecord.LastUpdated = DateTime.UtcNow;
+            }
+            else
+            {
+                var newUserCompatibility = new UserCompatibility
+                {
+                    UserId1 = userId1,
+                    UserId2 = userId2,
+                    Compatibility = compatibility,
+                    LastUpdated = DateTime.UtcNow
+                };
+                _databaseContext.UserCompatibilities.Add(newUserCompatibility);
+            }
+
+            await _databaseContext.SaveChangesAsync();
+        }
+
+        public async Task CalculateCompatibilityWithAllUsersAndStore(string userId)
+        {
+            var allUsers = await GetAllUsersAsync();
+
+            foreach (var user in allUsers)
+            {
+                if (user.Id != userId)
+                {
+                    double compatibility = await CalculateCompatibility(userId, user.Id);
+                    await StoreOrUpdateCompatibilityAsync(userId, user.Id, compatibility);
+                }
+            }
+        }
+
+        public async Task<List<User>> GetSortedCompatibilitiesFromDatabase(string currentUserId)
+        {
+            var compatibilities = await _databaseContext.UserCompatibilities
+                .Where(uc => uc.UserId1 == currentUserId || uc.UserId2 == currentUserId)
+                .ToListAsync();
+
+            var sortedCompatibilities = compatibilities
+                .Select(uc => new KeyValuePair<string, double>(uc.UserId1 == currentUserId ? uc.UserId2 : uc.UserId1, uc.Compatibility))
+                .OrderByDescending(kv => kv.Value)
+                .ToList();
+
+            var users = await _databaseContext.Users.ToListAsync();
+            List<User> users1 = new List<User>();
+
+            var friendList = await _databaseContext.Friends
+                .Where(f => f.UserId == currentUserId || f.FriendId == currentUserId)
+                .ToListAsync();
+
+            HashSet<string> friendIds = new HashSet<string>();
+            foreach (var friend in friendList)
+            {
+                friendIds.Add(friend.UserId == currentUserId ? friend.FriendId : friend.UserId);
+            }
+
+            foreach (var item in sortedCompatibilities)
+            {
+                if (item.Value > 0)
+                {
+                    var user = users.FirstOrDefault(s => s.Id == item.Key);
+                    if (!friendIds.Contains(user.Id))
+                    {
+                        users1.Add(user);
+                    }
+                }
+            }
+
+
+            return users1;
+        }
+
+        [HttpGet("sorted-compatibility")]
+        public async Task<IActionResult> GetSortedCompatibility()
+        {
+            var currentUserId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var sortedCompatibilities = await GetSortedCompatibilitiesFromDatabase(currentUserId);
+
+            return Ok(new { SortedCompatibility = sortedCompatibilities });
+        }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _databaseContext.Users.ToListAsync();
         }
 
     }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import axios from 'axios';
 import dayjs, { Dayjs } from 'dayjs';
 import Badge from '@mui/material/Badge';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -6,93 +7,89 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
-import Tooltip from '@mui/material/Tooltip';
+import { getRequest } from '../Api/Api';
 
-function getRandomNumber(min: number, max: number) {
-  return Math.round(Math.random() * (max - min) + min);
-}
+import 'dayjs/locale/lt'; 
 
-function fakeFetch(date: Dayjs, { signal }: { signal: AbortSignal }) {
-  return new Promise<{ daysToHighlight: number[] }>((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      const daysInMonth = date.daysInMonth();
-      const daysToHighlight = [1, 2, 3].map(() => getRandomNumber(1, daysInMonth));
+dayjs.locale('lt'); 
 
-      resolve({ daysToHighlight });
-    }, 500);
-
-    signal.onabort = () => {
-      clearTimeout(timeout);
-      reject(new DOMException('aborted', 'AbortError'));
-    };
-  });
-}
-
-const initialValue = dayjs(new Date());
+const token = `Bearer ${sessionStorage.getItem("token")}`;
 
 function ServerDay(props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }) {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
 
-  const isSelected =
-    !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) > 0;
+  const isSelected = (day: number, highlightedDays: number[]) => {
+    return highlightedDays.includes(day);
+  };
+ 
+  const backgroundColor = isSelected(props.day.date(),highlightedDays) ? '#66bb6a' : undefined;
 
   return (
     <Badge
       key={props.day.toString()}
       overlap="circular"
-      badgeContent={isSelected ? '🌚' : undefined}
+      badgeContent={isSelected(props.day.date(),highlightedDays) ? '✔️' : undefined}
     >
-      <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
+      <PickersDay
+        {...other}
+        outsideCurrentMonth={outsideCurrentMonth}
+        day={day}
+        sx={{
+          backgroundColor,
+          '&:hover': {
+            backgroundColor,
+          },
+        }}
+      />
     </Badge>
   );
 }
 
-export default function DateCalendarServerRequest() {
-  const requestAbortController = React.useRef<AbortController | null>(null);
+interface ChallengesBoxProps {
+  userName: string | undefined;
+}
+  
+  const DateCalendarServerRequest: React.FC<ChallengesBoxProps> = ({ userName }) => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
+  const [highlightedDays, setHighlightedDays] = React.useState<number[]>([]);
+  const [currentDate, setCurrentDate] = React.useState<Dayjs>(dayjs());
 
-  const fetchHighlightedDays = (date: Dayjs) => {
-    const controller = new AbortController();
-    fakeFetch(date, {
-      signal: controller.signal,
-    })
-      .then(({ daysToHighlight }) => {
-        setHighlightedDays(daysToHighlight);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        // ignore the error if it's caused by `controller.abort`
-        if (error.name !== 'AbortError') {
-          throw error;
-        }
-      });
-
-    requestAbortController.current = controller;
+  const fetchWatchingRequests = async (date: Dayjs) => {
+    setIsLoading(true);
+    try {
+      const response = await getRequest('https://localhost:7019/api/WatchingRequest/', userName ? userName : '');
+       
+      const filteredRequests = response.filter((request: any) => request.status === 1);
+     
+      const acceptedDates = response
+  .filter((request: any) => request.status === 1)
+  .map((request: any) => dayjs(request.watchingDate).startOf('day'));
+  
+        const daysToHighlight = acceptedDates
+        .filter((acceptedDate: Dayjs) => acceptedDate.month() === date.month())
+        .map((acceptedDate: Dayjs) => acceptedDate.date());
+  
+      setHighlightedDays(daysToHighlight);
+      setIsLoading(false);
+    } catch (error) {
+      
+      setIsLoading(false);
+    }
   };
 
+  
   React.useEffect(() => {
-    fetchHighlightedDays(initialValue);
-    // abort request on unmount
-    return () => requestAbortController.current?.abort();
-  }, []);
+    fetchWatchingRequests(currentDate);
+  }, [currentDate]);
 
   const handleMonthChange = (date: Dayjs) => {
-    if (requestAbortController.current) {
-      // make sure that you are aborting useless requests
-      // because it is possible to switch between months pretty quickly
-      requestAbortController.current.abort();
-    }
-
-    setIsLoading(true);
-    setHighlightedDays([]);
-    fetchHighlightedDays(date);
+    setCurrentDate(date);
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider  dateAdapter={AdapterDayjs}>
       <DateCalendar
-        defaultValue={initialValue}
+        defaultValue={currentDate}
         loading={isLoading}
         onMonthChange={handleMonthChange}
         renderLoading={() => <DayCalendarSkeleton />}
@@ -108,3 +105,4 @@ export default function DateCalendarServerRequest() {
     </LocalizationProvider>
   );
 }
+export default DateCalendarServerRequest

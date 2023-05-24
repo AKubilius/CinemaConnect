@@ -28,7 +28,7 @@ export default function SimpleContainer() {
         <Box>
           <Grid container spacing={5}>
             <Grid item xs={12}>
-              <Grid container justifyContent="center" spacing={10}>
+              <Grid container justifyContent="center" spacing={5}>
                 <Grid key={1} item>
                   <Paper sx={{ height: '100%', width: 350 }}>
                     <aside>

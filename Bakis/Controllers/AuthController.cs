@@ -21,40 +21,14 @@ namespace Bakis.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IJwtTokenService _jwtTokenService;
-        private readonly ApplicationDbContext _dbContext;
         private readonly IEmailService _emailService;
-        public AuthController(IEmailService emailService, ApplicationDbContext context, UserManager<User> userManager, IJwtTokenService jwtTokenService)
+        public AuthController(IEmailService emailService, UserManager<User> userManager, IJwtTokenService jwtTokenService)
         {
-            _dbContext = context;
             _userManager = userManager;
             _jwtTokenService = jwtTokenService;
             _emailService = emailService;
         }
 
-
-        private async Task<IActionResult> AddDefaultChallenges(User newUser)
-        {
-            // Query the default challenges from the database
-            var defaultChallenges = await _dbContext.Challenges.Where(c => c.Id == 3 || c.Id == 4 || c.Id == 5).ToListAsync();
-
-            // Create UserChallenge entries for the new user with the default challenges
-            foreach (var defaultChallenge in defaultChallenges)
-            {
-                var userChallenge = new UserChallenge
-                {
-                    UserId = newUser.Id,
-                    ChallengeId = defaultChallenge.Id,
-                    Progress = 0,
-                    Completed = false
-                };
-                _dbContext.UserChallenges.Add(userChallenge);
-            }
-
-            // Save the changes to the database
-            await _dbContext.SaveChangesAsync();
-
-            return Ok("Succesful");
-        }
 
         [HttpPost]
         [Route("register")]
@@ -75,7 +49,7 @@ namespace Bakis.Controllers
 
             await _userManager.AddToRoleAsync(newUser, Roles.User);
 
-            await AddDefaultChallenges(newUser);
+            //await AddDefaultChallenges(newUser);
 
             return CreatedAtAction(nameof(Register), new UserDto(newUser.Id, newUser.UserName, newUser.Email));
         }
@@ -92,9 +66,6 @@ namespace Bakis.Controllers
             if (!isPasswordValid)
                 return BadRequest("User name or password is invalid.");
 
-
-
-            //lyg nereikia
             var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id)
@@ -103,10 +74,7 @@ namespace Bakis.Controllers
             var principal = new ClaimsPrincipal(userIdentity);
 
             await HttpContext.SignInAsync(principal);
-            // cia
 
-
-            // valid user
             var roles = await _userManager.GetRolesAsync(user);
             bool aa = false;
             foreach (var role in roles)
@@ -125,18 +93,15 @@ namespace Bakis.Controllers
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                // Don't reveal that the user does not exist
-                return Ok("If an account with this email exists, a password reset link has been sent.");
+                return NoContent();
             }
 
-            // Generate a password reset token using UserManager
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            // Send the password reset link via email
             var callbackUrl = $"http://localhost:3000/reset-password?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(user.Email)}";
-            await _emailService.SendEmailAsync(user.Email, "Reset Password", $"Please reset your password by clicking <a href='{callbackUrl}'>here</a>");
+            await _emailService.SendEmailAsync(user.Email, "Reset Password", $"Pasikeiskite slaptažodį <a href='{callbackUrl}'>here</a>");
 
-            return Ok("If an account with this email exists, a password reset link has been sent.");
+            return Ok("Laiškas išsiųstas į nurodytą paštą");
         }
 
         [HttpPost("confirm-reset-password")]
@@ -145,17 +110,41 @@ namespace Bakis.Controllers
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                return BadRequest("Invalid email address");
+                return BadRequest("Netinkamas el.paštas");
             }
 
             var resetPasswordResult = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
 
             if (!resetPasswordResult.Succeeded)
             {
-                return BadRequest("Failed to reset password");
+                return BadRequest("Nepavyko pakeisti slaptažodžio");
             }
 
-            return Ok("Password reset successfully");
+            return Ok();
         }
+
+
+        //private async Task<IActionResult> AddDefaultChallenges(User newUser)
+        //{
+
+        //    var defaultChallenges = await _dbContext.Challenges.Where(c => c.Id == 3 || c.Id == 4 || c.Id == 5).ToListAsync();
+
+        //    foreach (var defaultChallenge in defaultChallenges)
+        //    {
+        //        var userChallenge = new UserChallenge
+        //        {
+        //            UserId = newUser.Id,
+        //            ChallengeId = defaultChallenge.Id,
+        //            Progress = 0,
+        //            Completed = false
+        //        };
+        //        _dbContext.UserChallenges.Add(userChallenge);
+        //    }
+
+        //    // Save the changes to the database
+        //    await _dbContext.SaveChangesAsync();
+
+        //    return Ok("Succesful");
+        //}
     }
 }

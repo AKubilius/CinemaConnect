@@ -7,17 +7,6 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import dayjs from 'dayjs';
 import { getRequest, makePutRequest } from '../Api/Api';
 
-  const handleClickAccept = async (Id: any) => {
-    console.log(Id)
-    const { data } = await makePutRequest(`https://localhost:7019/api/WatchingRequest/accept/${Id}`, { });
-    console.log(data)
-    return data;
-  };
-  const handleClickDecline = async (Id: any) => {
-    const { data } = await makePutRequest(`https://localhost:7019/api/WatchingRequest/decline/${Id}`, { });
-    console.log(data)
-    return data;
-  };
  
 
   interface Request {
@@ -34,10 +23,25 @@ margin:0
 export const ChatMovie = (movie: any) => 
 {
   
+  const handleClickAccept = async (Id: any) => {
+    const { data } = await makePutRequest(`https://localhost:7019/api/WatchingRequest/accept/${Id}`, { });
+    if (requests) {
+      setRequests({ ...requests, status: 1 }); 
+    }
+    return data;
+  };
+  const handleClickDecline = async (Id: any) => {
+    const { data } = await makePutRequest(`https://localhost:7019/api/WatchingRequest/decline/${Id}`, { });
+    if (requests) {
+      setRequests({ ...requests, status: 2 }); 
+    }
+    return data;
+  };
+ 
+
   const [requests, setRequests] = useState<Request>();
 
   const getBoxClassName = (status: number) => {
-    console.log(status)
     switch (status) {
       case 0:
         return 'message-content';
@@ -52,9 +56,8 @@ export const ChatMovie = (movie: any) =>
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getRequest('https://localhost:7019/api/WatchingRequest/', movie.id );
+      const data = await getRequest('https://localhost:7019/api/WatchingRequest/chat/', movie.id );
       setRequests(data);
-      console.log(data)
     };
     fetchData();
     
@@ -87,33 +90,36 @@ export const ChatMovie = (movie: any) =>
         flexDirection:'row',
         justifyContent:'space-around'
       }}> 
-       
-    <Button
-      variant="contained"
-      size="large"
-      sx={{
-        borderRadius: 5,
-        margin: 1,
-      }}
-      startIcon={<CheckIcon sx={{
-        color: 'green'
-      }} />}
-      onClick={() => handleClickAccept(movie.id)} >
-      Priimti
-    </Button>
-    <Button
-      variant="contained"
-      size="large"
-      sx={{
-        borderRadius: 5,
-        margin: 1,
-      }}
-      startIcon={<RemoveCircleIcon sx={{
-        color: 'red'
-      }} />}
-      onClick={() => handleClickDecline(movie.id)}>
-      Atmesti
-    </Button>
+    {movie.sender !== movie.username && (
+      <>
+        <Button
+          variant="contained"
+          size="large"
+          sx={{
+            borderRadius: 5,
+            margin: 1,
+          }}
+          startIcon={<CheckIcon sx={{
+            color: 'green'
+          }} />}
+          onClick={() => handleClickAccept(movie.id)} >
+          Priimti
+        </Button>
+        <Button
+          variant="contained"
+          size="large"
+          sx={{
+            borderRadius: 5,
+            margin: 1,
+          }}
+          startIcon={<RemoveCircleIcon sx={{
+            color: 'red'
+          }} />}
+          onClick={() => handleClickDecline(movie.id)}>
+          Atmesti
+        </Button>
+      </>
+    )}
     </Box>
     )}
     {/* Render additional movie information, such as image and title, when available */}

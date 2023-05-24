@@ -44,6 +44,10 @@ namespace Bakis.Data
                 .WithMany(u => u.SentMessages)
                 .HasForeignKey(m => m.SenderId);
         }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : base(options)
+        {
+        }
 
     }
 }

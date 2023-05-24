@@ -47,10 +47,9 @@ namespace Bakis.Controllers
                 userRecommendations.Add(recommendations);
             }
 
-            // Find the common movies in each user's recommendations
+          
             var commonMovies = GetCommonRecommendations(userRecommendations);
 
-            // Paginate the common movies
             return commonMovies
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -85,10 +84,9 @@ namespace Bakis.Controllers
                 userRecommendations.Add(recommendations);
             }
 
-            // Find the common movies in each user's recommendations
+            
             var commonMovies = GetCommonRecommendations(userRecommendations);
 
-            // Paginate the common movies
             return commonMovies
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)

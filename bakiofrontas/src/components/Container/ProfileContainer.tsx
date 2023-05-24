@@ -59,7 +59,8 @@ export default function SimpleContainer() {
                 <Grid key={3} item>
                   <Paper sx={{ height: '100%', width: 350 }}>
                     <aside>
-                     <Callendar/>
+                     <Callendar
+                     userName={userName}/>
                      <ChallengesBox
                      userName={userName} />
                     </aside>

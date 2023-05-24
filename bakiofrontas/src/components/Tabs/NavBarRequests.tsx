@@ -3,7 +3,7 @@ import Popover from '@mui/material/Popover/Popover'
 import Typography from '@mui/material/Typography/Typography'
 import React from 'react'
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import Requests from '../FriendRequest/Requests';
+import {Requests} from '../FriendRequest/Requests';
 
 export const NavBarRequests = () => {
 
@@ -46,7 +46,7 @@ export const NavBarRequests = () => {
         horizontal: 'center',
       }}
     ><p style={{margin:0}}>Pakvietimai</p>
-      <Requests/>
+      <Requests handleClos={handleClos}/>
     </Popover>
 </div>
   )
